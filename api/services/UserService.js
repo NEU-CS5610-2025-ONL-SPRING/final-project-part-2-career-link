@@ -15,6 +15,18 @@ const findUser = async (email) => {
   }
 };
 
+
+  const  generateUserResponse = (token, user ) => {
+    const userData = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+    };
+    return userData;
+  }
+
 module.exports = {
   findUser,
+  generateUserResponse
 };
