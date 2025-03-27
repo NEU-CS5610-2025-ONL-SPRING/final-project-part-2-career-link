@@ -1,18 +1,28 @@
 import React, { useState } from "react";
 import { TextField, Button, Box } from "@mui/material";
+import { useAuthUser } from "../../auth/authContext";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Login() {
 
   const [formData , setFormData] = useState({email : "" , password : ""});
+  const { login } = useAuthUser();
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
+    e.preventDefault();
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    await login(formData.email , formData.password);
+    navigate("/");
+    
   }
 
   return (
