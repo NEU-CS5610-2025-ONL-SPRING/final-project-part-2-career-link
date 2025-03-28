@@ -1,4 +1,6 @@
-export function requireAuth(req, res, next) {
+const jwt = require("jsonwebtoken");
+
+const requireAuth = (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ error: "Unauthorized" });
@@ -9,8 +11,12 @@ export function requireAuth(req, res, next) {
     req.userId = payload.userId;
 
     next();
-    
+
   } catch (err) {
     return res.status(401).json({ error: "Unauthorized" });
   }
+}
+
+module.exports = {
+    requireAuth
 }

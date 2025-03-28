@@ -3,6 +3,7 @@ const cors = require('cors');
 const healthCheckController = require('./controllers/healthCheckController');
 const authController = require('./controllers/authController');
 const cookieParser = require('cookie-parser');
+const { requireAuth } = require("./authMiddleWare.js");
 require("dotenv").config();
 
 const app = express();
@@ -21,6 +22,7 @@ app.get('/ping',healthCheckController.healthCheck);
 //Auth API's
 app.post('/login',authController.login)
 app.post('/logout',authController.logout)
+app.get('/api/users/token', requireAuth , authController.getUserByToken);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
