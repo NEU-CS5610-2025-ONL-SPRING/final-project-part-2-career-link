@@ -21,7 +21,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData.email , formData.password);
-    navigate("/");
+    navigate("/profile");
     
   }
 

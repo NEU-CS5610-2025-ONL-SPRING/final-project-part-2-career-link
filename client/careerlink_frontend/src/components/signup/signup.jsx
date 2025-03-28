@@ -39,6 +39,7 @@ const Signup = () => {
     name: "",
     email: "",
     password: "",
+    rePassword: "",
     role: "",
     company: "",
     newCompany: "",
@@ -73,11 +74,17 @@ const Signup = () => {
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
+    if(formData.password !== formData.rePassword) newErrors.rePassword = "Password doesn't match";
     if (!formData.role) newErrors.role = "Role is required";
-    if (formData.role === "Employer" && !formData.company)
+    if (formData.role === "Employer" && !formData.company) {
       newErrors.company = "Company is required";
-    if (!formData.location) newErrors.location = "Location is required";
-    if (!formData.website) newErrors.website = "Website is required";
+    }
+    if (formData.role === "Employer"){
+      if (!formData.location) newErrors.location = "Location is required";
+      if (!formData.website) newErrors.website = "Website is required";
+    }
+
+
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -102,7 +109,7 @@ const Signup = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            error={errors.name}
+            error={!!errors.name}
             helperText={errors.name}
             margin="normal"
           />
@@ -124,8 +131,20 @@ const Signup = () => {
             type="password"
             value={formData.password}
             onChange={handleChange}
-            error={errors.password}
+            error={!!errors.password}
             helperText={errors.password}
+            margin="normal"
+          />
+
+          <TextField
+            fullWidth
+            label="Re-Enter Password"
+            name="rePassword"
+            type="password"
+            value={formData.rePassword}
+            onChange={handleChange}
+            error={!!errors.rePassword}
+            helperText={errors.rePassword}
             margin="normal"
           />
           <FormControl fullWidth margin="normal" error={!!errors.role}>
@@ -173,9 +192,12 @@ const Signup = () => {
                 </Box>
               )}
             </>
+            
           )}
 
-          <TextField
+          {formData.role === "Employer" && (
+            <>
+            <TextField
             fullWidth
             label="Location"
             name="location"
@@ -195,6 +217,10 @@ const Signup = () => {
             helperText={errors.website}
             margin="normal"
           />
+          </>
+          )}
+
+          
 
           <Button
             type="submit"
