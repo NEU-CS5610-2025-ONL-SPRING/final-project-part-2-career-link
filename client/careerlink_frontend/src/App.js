@@ -1,18 +1,27 @@
 import Login from "./components/login/Login";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {RequireAuth} from "./auth/requireAuthContext"
+import Signup from "./components/signup/Signup";
+import Profile from "./components/profile/Profile";
 
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        Carrer Link Setup Frontend
-        
-      <Routes>
-        <Route path="/login" element={Login}></Route>
+    <>
+        <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          }
+        />
       </Routes>
-      </header>
-    </div>
+    </>
   );
 }
 
