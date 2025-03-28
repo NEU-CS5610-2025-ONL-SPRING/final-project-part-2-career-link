@@ -12,7 +12,7 @@ root.render(
   <AuthProvider>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <App></App>
+        <App/>
       </ThemeProvider>
     </BrowserRouter>
   </AuthProvider>
