@@ -2,7 +2,6 @@ import { useAuthUser } from "../../auth/authContext";
 
 export default function Profile() {
   const { user } = useAuthUser();
-
   return (
     <div>
       <div>

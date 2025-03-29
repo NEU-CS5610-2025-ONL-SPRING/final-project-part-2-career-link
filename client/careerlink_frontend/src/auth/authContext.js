@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
       const userData = await res.json();
       setIsAuthenticated(true);
       setUser(userData);
+      console.log(userData);
       
     } else {
       setIsAuthenticated(false);
@@ -60,6 +61,7 @@ export const AuthProvider = ({ children }) => {
       credentials: "include",
     });
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (

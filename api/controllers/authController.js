@@ -29,7 +29,7 @@ const login = async (req, res) => {
 
     res.cookie("token", token, { httpOnly: true, maxAge: 15 * 60 * 1000 });
 
-    const userData = generateUserResponse(token, user);
+    const userData = generateUserResponse(user);
 
     res.json(userData);
   } catch (e) {
