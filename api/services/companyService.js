@@ -1,13 +1,11 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const findCompanybyId = async (id) => {
+const findCompanybyName = async (name) => {
   try {
-    if(!id)
-        return null;
     const company = await prisma.company.findUnique({
       where: {
-        id: id,
+        name: name,
       },
     });
 
@@ -28,14 +26,29 @@ const createCompany = async (companyName, location, website) => {
       },
     });
 
-    if (company) return company
+    if (company) return company;
     return null;
   } catch (e) {
     console.log(e);
   }
 };
 
+const getAllCompaniesService = async () => {
+  try {
+    const companies = await prisma.company.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return companies;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 module.exports = {
-  findCompanybyId,
-  createCompany
+  findCompanybyName,
+  createCompany,
+  getAllCompaniesService,
 };

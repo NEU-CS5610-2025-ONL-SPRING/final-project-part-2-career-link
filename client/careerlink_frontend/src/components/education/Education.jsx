@@ -9,7 +9,7 @@ export default function Education() {
   useEffect(() => {
     async function getEducation() {
       try {
-        const response = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/education`);
+        const response = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/api/education`);
 
         if (response.ok) {
           const edu = await response.json();

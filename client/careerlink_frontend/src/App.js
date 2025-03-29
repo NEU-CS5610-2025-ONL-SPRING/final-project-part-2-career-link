@@ -3,7 +3,7 @@ import Home from "./components/home/Home";
 import Login from "./components/login/Login";
 import { Routes, Route } from "react-router-dom";
 import { RequireAuth } from "./auth/requireAuthContext";
-import Signup from "./components/signup/signup";
+import Signup from "./components/signup/Signup";
 import Profile from "./components/profile/Profile";
 import { Button } from "@mui/material";
 import { useAuthUser } from ".//auth/authContext";

@@ -9,7 +9,7 @@ const {
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const {
-  findCompanybyId,
+  findCompanybyName,
   createCompany,
 } = require("../services/companyService");
 const { $Enums } = require("@prisma/client");
@@ -55,7 +55,6 @@ const signup = async (req, res) => {
     companyName,
     location,
     website,
-    companyId,
   } = req.body;
 
   try {
@@ -78,7 +77,7 @@ const signup = async (req, res) => {
 
     let company;
     if (enumRole == $Enums.Role.EMPLOYER) {
-      company = await findCompanybyId(parseInt(companyId));
+      company = await findCompanybyName(companyName);
 
       if (!company) {
         company = await createCompany(companyName, location, website);
@@ -104,9 +103,9 @@ const signup = async (req, res) => {
 
     res.cookie("token", token, { httpOnly: true, maxAge: 15 * 60 * 1000 });
 
-    res.status(201).json({
-      message: "User created successfully",
-    });
+    const userData = generateUserResponse(user);
+
+    res.status(201).json(userData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
