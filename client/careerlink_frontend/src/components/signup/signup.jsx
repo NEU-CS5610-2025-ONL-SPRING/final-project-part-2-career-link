@@ -194,50 +194,51 @@ const Signup = () => {
               </FormControl>
 
               {formData.company === "" && (
-                <Box display="flex" gap={2}>
-                  <TextField
-                    fullWidth
-                    label="New Company Name"
-                    name="newCompany"
-                    value={formData.newCompany}
-                    onChange={handleChange}
-                    margin="normal"
-                  />
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ mt: 2, height: "56px" }}
-                    onClick={handleAddCompany}
-                  >
-                    Add
-                  </Button>
-                </Box>
+                <>
+                  <Box display="flex" gap={2}>
+                    <TextField
+                      fullWidth
+                      label="New Company Name"
+                      name="newCompany"
+                      value={formData.newCompany}
+                      onChange={handleChange}
+                      margin="normal"
+                    />
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      sx={{ mt: 2, height: "56px" }}
+                      onClick={handleAddCompany}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+                  {formData.role === "Employer" && (
+                    <>
+                      <TextField
+                        fullWidth
+                        label="Location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        error={!!errors.location}
+                        helperText={errors.location}
+                        margin="normal"
+                      />
+                      <TextField
+                        fullWidth
+                        label="Website"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleChange}
+                        error={!!errors.website}
+                        helperText={errors.website}
+                        margin="normal"
+                      />
+                    </>
+                  )}
+                </>
               )}
-            </>
-          )}
-
-          {formData.role === "Employer" && (
-            <>
-              <TextField
-                fullWidth
-                label="Location"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                error={!!errors.location}
-                helperText={errors.location}
-                margin="normal"
-              />
-              <TextField
-                fullWidth
-                label="Website"
-                name="website"
-                value={formData.website}
-                onChange={handleChange}
-                error={!!errors.website}
-                helperText={errors.website}
-                margin="normal"
-              />
             </>
           )}
 

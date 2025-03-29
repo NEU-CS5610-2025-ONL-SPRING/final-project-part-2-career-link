@@ -36,6 +36,9 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  companyId  Int?
+  company    Company? @relation("UserCompany", fields: [companyId], references: [id])
+
   jobs       Job[]       @relation("PostedJobs")
   applications Application[]
   projects   Project[]
@@ -49,9 +52,12 @@ model Company {
   location  String?
   website   String?
   jobs      Job[]
+  users     User[]   @relation("UserCompany")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  
 }
 
 model Job {
