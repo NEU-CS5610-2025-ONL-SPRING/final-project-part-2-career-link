@@ -3,25 +3,24 @@ import { fetchGetWithAuth } from "../../auth/fetchWithAuth";
 import { Card, CardContent, Typography, Grid, Box } from "@mui/material";
 
 export default function Education() {
-  const [education, setEducation] = useState(
-  );
+  const [education, setEducation] = useState([]);
 
-  useEffect(() => {
-    async function getEducation() {
-      try {
-        const response = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/api/education`);
+  // useEffect(() => {
+  //   async function getEducation() {
+  //     try {
+  //       const response = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/api/education`);
 
-        if (response.ok) {
-          const edu = await response.json();
-          setEducation((prevEducation) => [...prevEducation, ...edu]);
-        }
-      } catch (error) {
-        console.error("Error fetching education data:", error);
-      }
-    }
+  //       if (response.ok) {
+  //         const edu = await response.json();
+  //         setEducation((prevEducation) => [...prevEducation, ...edu]);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching education data:", error);
+  //     }
+  //   } 
 
-    getEducation();
-  }, []);
+  //   getEducation();
+  // }, []);
 
   return (
     <Box sx={{ padding: 3 }}>
