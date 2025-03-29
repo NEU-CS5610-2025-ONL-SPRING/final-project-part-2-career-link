@@ -23,7 +23,7 @@ app.get('/ping',healthCheckController.healthCheck);
 
 //Auth API's
 app.post('/login',authController.login)
-app.post('/signup',authController.signup)
+app.post('/register',authController.signup)
 app.post('/logout',authController.logout)
 app.get('/api/users/token', requireAuth , authController.getUserByToken);
 

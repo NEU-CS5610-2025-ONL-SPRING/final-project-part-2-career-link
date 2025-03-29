@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (user) => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/signup`, {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
