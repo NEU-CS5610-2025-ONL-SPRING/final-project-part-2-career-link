@@ -1,10 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
-
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -12,9 +10,12 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/users/token`, {
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${process.env.REACT_APP_API_URL}/api/users/token`,
+          {
+            credentials: "include",
+          }
+        );
 
         if (res.ok) {
           setIsAuthenticated(true);
@@ -34,7 +35,6 @@ export const AuthProvider = ({ children }) => {
     fetchUserData();
   }, []);
 
-
   const login = async (email, password) => {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
@@ -47,7 +47,26 @@ export const AuthProvider = ({ children }) => {
       const userData = await res.json();
       setIsAuthenticated(true);
       setUser(userData);
-      
+      console.log(userData);
+    } else {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
+  };
+
+  const signup = async (user) => {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
+
+    if (res.ok) {
+      const userData = await res.json();
+      setIsAuthenticated(true);
+      setUser(userData);
+      console.log(userData);
     } else {
       setIsAuthenticated(false);
       setUser(null);
@@ -60,15 +79,16 @@ export const AuthProvider = ({ children }) => {
       credentials: "include",
     });
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, loading, user, login, logout }}
+      value={{ isAuthenticated, loading, user, login, logout , signup}}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export const useAuthUser = () => useContext(AuthContext);

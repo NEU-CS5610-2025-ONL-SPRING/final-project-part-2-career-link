@@ -1,8 +1,8 @@
-import { useAuthUser } from "../../auth/authContext";
+import { useAuthUser } from "../../auth/authContext"
+import Education from "../education/Education";
 
 export default function Profile() {
   const { user } = useAuthUser();
-
   return (
     <div>
       <div>
@@ -11,9 +11,8 @@ export default function Profile() {
       <div>
         <p>📧 Email: {user?.email}</p>
       </div>
-      <div>
-        Role : {user?.role}
-      </div>
+      <div>Role : {user?.role}</div>
+      <div>{user.role === "JOB_SEEKER" && <Education />}</div>
     </div>
   );
 }
