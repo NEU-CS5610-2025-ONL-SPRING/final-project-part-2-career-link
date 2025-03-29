@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+
 import {
   Box,
   TextField,
@@ -11,6 +12,8 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import { useNavigate } from "react-router-dom";
+import theme from "../../theme";
 
 const SignupBox = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
@@ -35,6 +38,7 @@ const SignupCard = styled(Paper)(({ theme }) => ({
 }));
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,7 +69,11 @@ const Signup = () => {
   const handleAddCompany = () => {
     if (formData.newCompany && !companies.includes(formData.newCompany)) {
       setCompanies([...companies, formData.newCompany]);
-      setFormData({ ...formData, company: formData.newCompany, newCompany: "" });
+      setFormData({
+        ...formData,
+        company: formData.newCompany,
+        newCompany: "",
+      });
     }
   };
 
@@ -74,17 +82,16 @@ const Signup = () => {
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
-    if(formData.password !== formData.rePassword) newErrors.rePassword = "Password doesn't match";
+    if (formData.password !== formData.rePassword)
+      newErrors.rePassword = "Password doesn't match";
     if (!formData.role) newErrors.role = "Role is required";
     if (formData.role === "Employer" && !formData.company) {
       newErrors.company = "Company is required";
     }
-    if (formData.role === "Employer"){
+    if (formData.role === "Employer") {
       if (!formData.location) newErrors.location = "Location is required";
       if (!formData.website) newErrors.website = "Website is required";
     }
-
-
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -99,8 +106,19 @@ const Signup = () => {
   return (
     <SignupBox>
       <SignupCard>
-        <Typography variant="h5" gutterBottom>
-          Signup
+        <Typography
+          variant="h4"
+          gutterBottom
+          textAlign="center"
+          sx={{
+            fontWeight: 700,
+            letterSpacing: 1,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Ready to find your dream job?
         </Typography>
         <form onSubmit={handleSubmit}>
           <TextField
@@ -160,7 +178,11 @@ const Signup = () => {
             <>
               <FormControl fullWidth margin="normal" error={!!errors.company}>
                 <InputLabel>Company Name</InputLabel>
-                <Select name="company" value={formData.company} onChange={handleCompanyChange}>
+                <Select
+                  name="company"
+                  value={formData.company}
+                  onChange={handleCompanyChange}
+                >
                   <MenuItem value="">Select Company</MenuItem>
                   {companies.map((company, index) => (
                     <MenuItem key={index} value={company}>
@@ -192,35 +214,32 @@ const Signup = () => {
                 </Box>
               )}
             </>
-            
           )}
 
           {formData.role === "Employer" && (
             <>
-            <TextField
-            fullWidth
-            label="Location"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            error={!!errors.location}
-            helperText={errors.location}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Website"
-            name="website"
-            value={formData.website}
-            onChange={handleChange}
-            error={!!errors.website}
-            helperText={errors.website}
-            margin="normal"
-          />
-          </>
+              <TextField
+                fullWidth
+                label="Location"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                error={!!errors.location}
+                helperText={errors.location}
+                margin="normal"
+              />
+              <TextField
+                fullWidth
+                label="Website"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+                error={!!errors.website}
+                helperText={errors.website}
+                margin="normal"
+              />
+            </>
           )}
-
-          
 
           <Button
             type="submit"
@@ -232,6 +251,25 @@ const Signup = () => {
             Signup
           </Button>
         </form>
+
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <Button
+            onClick={() => navigate("/login")}
+            fullWidth
+            variant="contained"
+            color="secondary"
+            sx={{
+              marginTop: "15px",
+              backgroundColor: "#00A300",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: theme.shadows[8],
+              },
+            }}
+          >
+            Already a Member?
+          </Button>
+        </Box>
       </SignupCard>
     </SignupBox>
   );
