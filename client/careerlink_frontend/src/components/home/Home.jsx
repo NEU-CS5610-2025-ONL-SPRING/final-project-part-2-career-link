@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
+import NavBar from '../navbar/NavBar';  
 
 // Custom styled components
 const HeroBox = styled(Box)(({ theme }) => ({
@@ -53,6 +54,8 @@ const Home = () => {
 
     return (
         <Box sx={{ bgcolor: 'background.default' }}>
+            <NavBar />
+
             {/* Hero Section */}
             <HeroBox>
                 <Container maxWidth="md">
