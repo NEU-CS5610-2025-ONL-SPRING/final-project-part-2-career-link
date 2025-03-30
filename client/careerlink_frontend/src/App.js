@@ -3,7 +3,7 @@ import Home from "./components/home/Home.jsx";
 import Login from "./components/login/Login.jsx";
 import { Routes, Route } from "react-router-dom";
 import { RequireAuth } from "./auth/requireAuthContext.js";
-import Signup from "./components/signup/signup.jsx";
+import Signup from "./components/signup/Signup.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import { Button } from "@mui/material";
 import { useAuthUser } from ".//auth/authContext.js";
