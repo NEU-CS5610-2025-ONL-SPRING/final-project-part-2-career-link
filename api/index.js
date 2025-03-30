@@ -27,8 +27,11 @@ app.post('/register', authController.signup);
 app.post('/logout', authController.logout);
 app.get('/api/users/token', requireAuth, authController.getUserByToken);
 
-// Education API's
-app.get('/api/users/education/:userId', requireAuth, educationController.getEducation);
+//Education API's
+app.get('/api/education/:userId', requireAuth, educationController.getEducation);
+app.post('/api/education/', requireAuth, educationController.addEducation);
+app.delete('/api/education/:id', requireAuth, educationController.deleteEducation);
+
 
 // Company API's
 app.get('/api/companies', companiesController.getAllCompanies);

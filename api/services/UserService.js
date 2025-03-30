@@ -46,14 +46,20 @@ const findEducationByUserId = async (id) => {
   }
 };
 
-const createUser = async (username,email,hashedPassword,enumRole,company) => {
+const createUser = async (
+  username,
+  email,
+  hashedPassword,
+  enumRole,
+  company
+) => {
   try {
     const user = await prisma.user.create({
       data: {
         username,
         email,
         password: hashedPassword,
-        role :enumRole ,
+        role: enumRole,
         companyId: enumRole === $Enums.Role.EMPLOYER ? company.id : null,
       },
     });
@@ -74,23 +80,15 @@ const generateUserResponse = (user) => {
   return userData;
 };
 
-const generateUserEducationResponse = (user) => {
-  const education = {
-    education: user.education,
-  };
-  return education;
-};
-
 const getRoleEnum = (role) => {
   let roleEnum = null;
   if (role.toLowerCase() === "employer") {
     roleEnum = $Enums.Role.EMPLOYER;
-  }
-  else if (role.toLowerCase() === "job seeker") {
+  } else if (role.toLowerCase() === "job seeker") {
     roleEnum = $Enums.Role.JOB_SEEKER;
   }
   return roleEnum;
-}
+};
 
 module.exports = {
   findUser,
@@ -98,8 +96,5 @@ module.exports = {
   generateUserResponse,
   findEducationByUserId,
   createUser,
-  generateUserEducationResponse,
-  getRoleEnum
+  getRoleEnum,
 };
-
-
