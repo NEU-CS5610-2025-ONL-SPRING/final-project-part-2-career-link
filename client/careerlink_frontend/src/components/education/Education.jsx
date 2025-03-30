@@ -18,7 +18,7 @@ import { useAuthUser } from "../../auth/authContext";
 export default function Education() {
   const [education, setEducation] = useState([]);
   const { user } = useAuthUser();
-  const [openDialog, setOpenDialog] = useState(false); // State to control Dialog visibility
+  const [openDialog, setOpenDialog] = useState(false);
   const [newEducation, setNewEducation] = useState({
     institution: "",
     degree: "",

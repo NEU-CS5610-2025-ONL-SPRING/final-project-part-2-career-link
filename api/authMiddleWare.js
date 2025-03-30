@@ -9,6 +9,8 @@ const requireAuth = (req, res, next) => {
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
  
+    req.userId = payload.userId;
+
     req.user = {
       userId: payload.userId,
       role: payload.role,
