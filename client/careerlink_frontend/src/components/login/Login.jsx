@@ -1,51 +1,53 @@
 import React, { useState } from "react";
-import { TextField, Button, Box } from "@mui/material";
+import { TextField, Button, Paper, Box } from "@mui/material";
 import { useAuthUser } from "../../auth/authContext";
 import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/material/styles";
+import theme from "../../theme";
 
+const LoginBox = styled(Box)(({ theme }) => ({
+  minHeight: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(4),
+}));
+
+const LoginCard = styled(Paper)(({ theme }) => ({
+  width: "400px",
+  padding: theme.spacing(4),
+  borderRadius: theme.spacing(2),
+  boxShadow: theme.shadows[6],
+  transition: "transform 0.3s, box-shadow 0.3s",
+  backgroundColor: "white",
+  "&:hover": {
+    transform: "translateY(-5px)",
+    boxShadow: theme.shadows[8],
+  },
+}));
 
 export default function Login() {
-
-  const [formData , setFormData] = useState({email : "" , password : ""});
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const { login } = useAuthUser();
   const navigate = useNavigate();
-
 
   const handleChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData.email , formData.password);
+    await login(formData.email, formData.password);
     navigate("/profile");
-    
-  }
+  };
 
   return (
-    <Box 
-    sx={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-      width: "100vw",
-    }}>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          width: 400, 
-          p: 3,
-          border: "2px solid #1976d2",
-          borderRadius: 2,
-          boxShadow: 3,
-          backgroundColor: "white",
-        }}
-      >
+    <LoginBox>
+      <LoginCard component="form" onSubmit={handleSubmit}>
         <TextField
           fullWidth
           label="Email"
@@ -71,13 +73,30 @@ export default function Login() {
         <Button
           type="submit"
           variant="contained"
-          color="primary"
+          color="secondary"
           fullWidth
           sx={{ mt: 2 }}
         >
-          Submit
+          Login
         </Button>
-      </Box>
-    </Box>
+
+        <Button
+          onClick={() => navigate("/signup")}
+          fullWidth
+          variant="contained"
+          color="secondary"
+          sx={{
+            marginTop: "15px",
+            backgroundColor: "#00A300",
+            "&:hover": {
+              transform: "translateY(-5px)",
+              boxShadow: theme.shadows[8],
+            },
+          }}
+        >
+          Sign Up
+        </Button>
+      </LoginCard>
+    </LoginBox>
   );
 }
