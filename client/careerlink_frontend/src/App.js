@@ -1,12 +1,13 @@
 import React from "react";
-import Home from "./components/home/Home";
-import Login from "./components/login/Login";
+import Home from "./components/home/Home.jsx";
+import Login from "./components/login/Login.jsx";
 import { Routes, Route } from "react-router-dom";
-import { RequireAuth } from "./auth/requireAuthContext";
-import Signup from "./components/signup/Signup";
-import Profile from "./components/profile/Profile";
+import { RequireAuth } from "./auth/requireAuthContext.js";
+import Signup from "./components/signup/signup.jsx";
+import Profile from "./components/profile/Profile.jsx";
 import { Button } from "@mui/material";
-import { useAuthUser } from ".//auth/authContext";
+import { useAuthUser } from ".//auth/authContext.js";
+import EmployerDashboard from "./components/employer/Dashboard.jsx";
 
 function App() {
   const { logout } = useAuthUser();
@@ -23,6 +24,14 @@ function App() {
           element={
             <RequireAuth>
               <Profile />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/employer/dashboard"
+          element={
+            <RequireAuth roles={['EMPLOYER']}>
+              <EmployerDashboard />
             </RequireAuth>
           }
         />

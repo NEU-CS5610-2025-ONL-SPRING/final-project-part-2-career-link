@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import App from "./App.js";
+import reportWebVitals from "./reportWebVitals.js";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./auth/authContext";
-import theme from "./theme";
+import { AuthProvider } from "./auth/authContext.js";
+import theme from "./theme.js";
 import { ThemeProvider } from "@emotion/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
