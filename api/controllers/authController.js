@@ -30,7 +30,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const payload = { userId: user.id };
+    const payload = { userId: user.id, role: user.role};
 
     const token = generateJWTToken(payload);
 
@@ -97,7 +97,7 @@ const signup = async (req, res) => {
         .json({ message: "Something went wrong creating new user" });
     }
 
-    const payload = { userId: user.id };
+    const payload = { userId: user.id, role: user.role };
 
     const token = generateJWTToken(payload);
 
@@ -119,7 +119,7 @@ const logout = async (req, res) => {
 
 const getUserByToken = async (req, res) => {
   try {
-    const user = await findUserByUserId(req.userId);
+    const user = await findUserByUserId(req.user.userId);
 
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
