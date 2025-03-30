@@ -58,7 +58,7 @@ const Signup = () => {
 
   const [newCompanies, setNewCompanies] = useState([]);
   const [errors, setErrors] = useState({});
-  const [apiError, setApiError] = useState({});
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     async function fetchCompanies() {
