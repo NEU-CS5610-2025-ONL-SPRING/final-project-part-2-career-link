@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (user) => {
+  const signup = async (user,navigate) => {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
       method: "POST",
       credentials: "include",
@@ -73,10 +73,15 @@ export const AuthProvider = ({ children }) => {
       const userData = await res.json();
       setIsAuthenticated(true);
       setUser(userData);
-      console.log(userData);
+      if(userData.role.toLowerCase() === "employer")
+        navigate("/employer/dashboard");
+      else
+        navigate("/profile");
     } else {
+      const errorData = await res.json(); 
       setIsAuthenticated(false);
       setUser(null);
+      throw new Error(errorData.error || "Signup failed. Please try again.");
     }
   };
 
