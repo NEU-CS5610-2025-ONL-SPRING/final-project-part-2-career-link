@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 export const AuthContext = createContext();
 
@@ -82,13 +82,24 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
-  return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, loading, user, login, logout , signup}}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+ // Role checking utilities
+ const hasRole = (role) => user?.role === role;
+
+ return (
+   <AuthContext.Provider
+     value={{
+       isAuthenticated: isAuthenticated,
+       loading,
+       user: user,
+       login,
+       logout,
+       signup,
+       hasRole,
+     }}
+   >
+     {children}
+   </AuthContext.Provider>
+ );
 };
 
 export const useAuthUser = () => useContext(AuthContext);
