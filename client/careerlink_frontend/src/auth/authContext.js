@@ -7,6 +7,8 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
+
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -35,22 +37,27 @@ export const AuthProvider = ({ children }) => {
     fetchUserData();
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password, navigate) => {
     const res = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-
+  
     if (res.ok) {
       const userData = await res.json();
       setIsAuthenticated(true);
       setUser(userData);
-      console.log(userData);
+      if(userData.role.toLowerCase() === "employer")
+        navigate("/employer/dashboard");
+      else
+        navigate("/profile");
     } else {
+      const errorData = await res.json(); 
       setIsAuthenticated(false);
       setUser(null);
+      throw new Error(errorData.error || "Login failed. Please try again.");
     }
   };
 
