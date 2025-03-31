@@ -9,7 +9,6 @@ import {
     useTheme,
     useMediaQuery,
     Fade,
-    Grow,
     Slide
 } from '@mui/material';
 import { Link } from 'react-router-dom';
@@ -17,7 +16,7 @@ import { styled } from '@mui/material/styles';
 
 // Custom styled components
 const HeroBox = styled(Box)(({ theme }) => ({
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 64px)',
     display: 'flex',
     alignItems: 'center',
     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
@@ -80,46 +79,6 @@ const Home = () => {
                             >
                                 The ultimate platform connecting top talent with leading employers
                             </Typography>
-                            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
-                                <Grow in timeout={1200}>
-                                    <Button
-                                        component={Link}
-                                        to="/login"
-                                        variant="contained"
-                                        color="secondary"
-                                        size="large"
-                                        sx={{
-                                            px: 4,
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Login
-                                    </Button>
-                                </Grow>
-                                <Grow in timeout={1400}>
-                                    <Button
-                                        component={Link}
-                                        to="/signup"
-                                        variant="outlined"
-                                        color="secondary"
-                                        size="large"
-                                        sx={{
-                                            px: 4,
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            fontWeight: 600,
-                                            borderWidth: 2,
-                                            '&:hover': {
-                                                borderWidth: 2
-                                            }
-                                        }}
-                                    >
-                                        Sign Up
-                                    </Button>
-                                </Grow>
-                            </Box>
                         </Box>
                     </Fade>
                 </Container>
