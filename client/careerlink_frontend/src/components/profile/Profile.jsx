@@ -1,13 +1,11 @@
 import { useAuthUser } from "../../auth/authContext"
 import Education from "../education/Education";
-import NavBar from '../navbar/NavBar'; 
 
 
 export default function Profile() {
   const { user } = useAuthUser();
   return (
     <div>
-    <NavBar />
       <div>
         <p>Name: {user?.username}</p>
       </div>

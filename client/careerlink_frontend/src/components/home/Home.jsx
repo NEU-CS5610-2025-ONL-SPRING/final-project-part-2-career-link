@@ -9,12 +9,10 @@ import {
     useTheme,
     useMediaQuery,
     Fade,
-    Grow,
     Slide
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
-import NavBar from '../navbar/NavBar';  
 
 // Custom styled components
 const HeroBox = styled(Box)(({ theme }) => ({
@@ -54,8 +52,6 @@ const Home = () => {
 
     return (
         <Box sx={{ bgcolor: 'background.default' }}>
-            <NavBar />
-
             {/* Hero Section */}
             <HeroBox>
                 <Container maxWidth="md">
@@ -83,46 +79,6 @@ const Home = () => {
                             >
                                 The ultimate platform connecting top talent with leading employers
                             </Typography>
-                            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', gap: 2 }}>
-                                <Grow in timeout={1200}>
-                                    <Button
-                                        component={Link}
-                                        to="/login"
-                                        variant="contained"
-                                        color="secondary"
-                                        size="large"
-                                        sx={{
-                                            px: 4,
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            fontWeight: 600
-                                        }}
-                                    >
-                                        Login
-                                    </Button>
-                                </Grow>
-                                <Grow in timeout={1400}>
-                                    <Button
-                                        component={Link}
-                                        to="/signup"
-                                        variant="outlined"
-                                        color="secondary"
-                                        size="large"
-                                        sx={{
-                                            px: 4,
-                                            py: 1.5,
-                                            borderRadius: 2,
-                                            fontWeight: 600,
-                                            borderWidth: 2,
-                                            '&:hover': {
-                                                borderWidth: 2
-                                            }
-                                        }}
-                                    >
-                                        Sign Up
-                                    </Button>
-                                </Grow>
-                            </Box>
                         </Box>
                     </Fade>
                 </Container>

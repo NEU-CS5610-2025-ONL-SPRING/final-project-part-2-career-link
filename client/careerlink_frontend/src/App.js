@@ -5,15 +5,16 @@ import { Routes, Route } from "react-router-dom";
 import { RequireAuth } from "./auth/requireAuthContext.js";
 import Signup from "./components/signup/signup.jsx";
 import Profile from "./components/profile/Profile.jsx";
-import { Button } from "@mui/material";
-import { useAuthUser } from ".//auth/authContext.js";
+import { useAuthUser } from "./auth/authContext.js"; 
 import EmployerDashboard from "./components/employer/Dashboard.jsx";
+import NavBar from "./components/navbar/NavBar.jsx";
 
 function App() {
   const { logout } = useAuthUser();
+
   return (
     <>
-      <Button onClick={logout}> Logout </Button>
+      <NavBar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -30,7 +31,7 @@ function App() {
         <Route
           path="/employer/dashboard"
           element={
-            <RequireAuth roles={['EMPLOYER']}>
+            <RequireAuth roles={["EMPLOYER"]}>
               <EmployerDashboard />
             </RequireAuth>
           }

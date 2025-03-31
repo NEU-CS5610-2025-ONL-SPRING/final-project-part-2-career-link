@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { 
+import {
   AppBar,
   Toolbar,
   Container,
@@ -76,11 +76,16 @@ const ActionButton = styled(Button)(({ theme }) => ({
 const NavBar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { user, isAuthenticated, logout } = useAuthUser();
+  const { user, isAuthenticated, logout, hasRole } = useAuthUser();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+
+  // Get dashboard path based on user role
+  const getDashboardPath = () => {
+    return hasRole('EMPLOYER') ? '/employer/dashboard' : '/employee/dashboard';
+  };
 
   // Handle scroll effect
   React.useEffect(() => {
@@ -119,9 +124,9 @@ const NavBar = () => {
         <Toolbar disableGutters>
           {/* Logo */}
           <Box sx={{ flexGrow: isMobile ? 1 : 0 }}>
-            <Logo 
-              variant="h6" 
-              component={Link} 
+            <Logo
+              variant="h6"
+              component={Link}
               to="/"
               sx={{
                 fontSize: isMobile ? '1.25rem' : '1.5rem'
@@ -133,16 +138,18 @@ const NavBar = () => {
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{ 
-              display: 'flex', 
-              justifyContent: 'center', 
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'center',
               flexGrow: 1,
               gap: 1
             }}>
               <NavButton component={Link} to="/">Home</NavButton>
-              <NavButton component={Link} to="/jobs">Jobs</NavButton>
+              {isAuthenticated && (
+                <NavButton component={Link} to={getDashboardPath()}>Dashboard</NavButton>
+              )}
               <NavButton component={Link} to="/companies">Companies</NavButton>
-              <NavButton component={Link} to="/resources">Resources</NavButton>
+
             </Box>
           )}
 
@@ -157,16 +164,15 @@ const NavBar = () => {
                   color="inherit"
                   sx={{ ml: 1 }}
                 >
-                  <Avatar sx={{ 
-                    width: 32, 
+                  <Avatar sx={{
+                    width: 32,
                     height: 32,
                     bgcolor: isAuthenticated ? theme.palette.secondary.main : 'transparent'
                   }}>
                     {isAuthenticated ? (user?.username?.charAt(0) || user?.email?.charAt(0)) : <MenuIcon />}
-
                   </Avatar>
                 </IconButton>
-                
+
                 {isAuthenticated ? (
                   <Menu
                     anchorEl={profileAnchorEl}
@@ -182,24 +188,16 @@ const NavBar = () => {
                       },
                     }}
                   >
-                    <MenuItem 
-                      component={Link} 
-                      to="/profile" 
+                    <MenuItem
+                      component={Link}
+                      to="/profile"
                       onClick={handleProfileMenuClose}
                       sx={{ py: 1.5 }}
                     >
                       My Profile
                     </MenuItem>
-                    <MenuItem 
-                      component={Link} 
-                      to="/dashboard" 
-                      onClick={handleProfileMenuClose}
-                      sx={{ py: 1.5 }}
-                    >
-                      Dashboard
-                    </MenuItem>
                     <Divider />
-                    <MenuItem 
+                    <MenuItem
                       onClick={handleLogout}
                       sx={{ py: 1.5, color: theme.palette.error.main }}
                     >
@@ -221,17 +219,17 @@ const NavBar = () => {
                       },
                     }}
                   >
-                    <MenuItem 
-                      component={Link} 
-                      to="/login" 
+                    <MenuItem
+                      component={Link}
+                      to="/login"
                       onClick={handleMenuClose}
                       sx={{ py: 1.5 }}
                     >
                       Login
                     </MenuItem>
-                    <MenuItem 
-                      component={Link} 
-                      to="/signup" 
+                    <MenuItem
+                      component={Link}
+                      to="/signup"
                       onClick={handleMenuClose}
                       sx={{ py: 1.5 }}
                     >
@@ -239,7 +237,6 @@ const NavBar = () => {
                     </MenuItem>
                     <Divider />
                     <MenuItem component={Link} to="/" onClick={handleMenuClose}>Home</MenuItem>
-                    <MenuItem component={Link} to="/jobs" onClick={handleMenuClose}>Jobs</MenuItem>
                     <MenuItem component={Link} to="/companies" onClick={handleMenuClose}>Companies</MenuItem>
                   </Menu>
                 )}
@@ -255,9 +252,9 @@ const NavBar = () => {
                       onClick={handleProfileMenuOpen}
                       sx={{ ml: 1 }}
                     >
-                      <Avatar 
-                        sx={{ 
-                          width: 36, 
+                      <Avatar
+                        sx={{
+                          width: 36,
                           height: 36,
                           bgcolor: theme.palette.secondary.main
                         }}
@@ -279,24 +276,16 @@ const NavBar = () => {
                         },
                       }}
                     >
-                      <MenuItem 
-                        component={Link} 
-                        to="/profile" 
+                      <MenuItem
+                        component={Link}
+                        to="/profile"
                         onClick={handleProfileMenuClose}
                         sx={{ py: 1.5 }}
                       >
                         My Profile
                       </MenuItem>
-                      <MenuItem 
-                        component={Link} 
-                        to="/dashboard" 
-                        onClick={handleProfileMenuClose}
-                        sx={{ py: 1.5 }}
-                      >
-                        Dashboard
-                      </MenuItem>
                       <Divider />
-                      <MenuItem 
+                      <MenuItem
                         onClick={handleLogout}
                         sx={{ py: 1.5, color: theme.palette.error.main }}
                       >
@@ -306,19 +295,19 @@ const NavBar = () => {
                   </>
                 ) : (
                   <>
-                    <ActionButton 
-                      component={Link} 
-                      to="/login" 
-                      variant="outlined" 
+                    <ActionButton
+                      component={Link}
+                      to="/login"
+                      variant="outlined"
                       color="inherit"
                       sx={{ mr: 1 }}
                     >
                       Login
                     </ActionButton>
-                    <ActionButton 
-                      component={Link} 
-                      to="/signup" 
-                      variant="contained" 
+                    <ActionButton
+                      component={Link}
+                      to="/signup"
+                      variant="contained"
                       color="secondary"
                     >
                       Sign Up
