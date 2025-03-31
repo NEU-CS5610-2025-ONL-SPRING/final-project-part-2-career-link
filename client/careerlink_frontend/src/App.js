@@ -6,7 +6,7 @@ import { RequireAuth } from "./auth/requireAuthContext.js";
 import Signup from "./components/signup/Signup.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import EmployerDashboard from "./components/employer/Dashboard.jsx";
-import NavBar from "./components/navBar/NavBar.jsx"
+import NavBar from "./components/navbar/NavBar.jsx"
 import Companies from "./components/Companies.jsx";
 import { Box } from "@mui/material";
 
