@@ -30,8 +30,8 @@ This robust system ensures a secure, scalable, and user-friendly experience for 
 
 1. Run `npm install` in both client\careerlink_folder and api folder.
 2. Create .env file inside `api` folder and add DATABASE_URL and JWT_SECRET. 
-    Format for DATABASE_URL = 'postgres://username:password@host:port/carrerlink'
-    Format for JWT_SECRET = 'ANY_LARGE_STRING'
+    - Format for DATABASE_URL = 'postgres://username:password@host:port/carrerlink'.
+    - Format for JWT_SECRET = 'ANY_LARGE_STRING'.
 3. If any issue with Prisma occurs when trying to run backend use `npx prisma generate` inside API folder.
 4. Please make sure postgres is installed for backend to work. Can be installed from https://www.postgresql.org/ 
 
