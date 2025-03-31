@@ -16,7 +16,7 @@ import { styled } from '@mui/material/styles';
 
 // Custom styled components
 const HeroBox = styled(Box)(({ theme }) => ({
-    minHeight: '100vh',
+    minHeight: 'calc(100vh - 64px)',
     display: 'flex',
     alignItems: 'center',
     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
