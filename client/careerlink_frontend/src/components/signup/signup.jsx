@@ -58,6 +58,7 @@ const Signup = () => {
 
   const [newCompanies, setNewCompanies] = useState([]);
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
 
   useEffect(() => {
     async function fetchCompanies() {
@@ -148,14 +149,22 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    if (!validateForm()) return;
-    setFormData(updateFormDataWithCompanies(formData, newCompanies));
-    await signup(formData);
+    try {
+      if (!validateForm()) return;
+      setFormData(updateFormDataWithCompanies(formData, newCompanies));
+      await signup(formData, navigate);
+    } catch (err) {
+      setApiError(err.message || "Login failed. Please try again.");
+    }
   };
 
   return (
     <SignupBox>
+      {apiError && (
+        <Typography color="error" sx={{ mb: 2 }}>
+          {apiError}
+        </Typography>
+      )}
       <SignupCard>
         <Typography
           variant="h4"

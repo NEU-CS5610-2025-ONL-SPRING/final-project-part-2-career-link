@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Paper, Box } from "@mui/material";
+import { TextField, Button, Paper, Box, Typography } from "@mui/material";
 import { useAuthUser } from "../../auth/authContext";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
@@ -31,6 +31,8 @@ const LoginCard = styled(Paper)(({ theme }) => ({
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const { login } = useAuthUser();
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -41,13 +43,21 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await login(formData.email, formData.password);
-    navigate("/profile");
+    try {
+      await login(formData.email, formData.password, navigate);
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    }
   };
 
   return (
     <LoginBox>
       <LoginCard component="form" onSubmit={handleSubmit}>
+        {error && (
+          <Typography color="error" sx={{ mb: 2 }}>
+            {error}
+          </Typography>
+        )}
         <TextField
           fullWidth
           label="Email"
