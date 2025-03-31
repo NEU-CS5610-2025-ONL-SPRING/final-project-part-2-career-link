@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { fetchGetWithAuth, fetchPostWithAuth } from "../../auth/fetchWithAuth";
+import {
+  fetchGetWithAuth,
+  fetchPostWithAuth,
+  fetchDeleteWithAuth,
+} from "../../auth/fetchWithAuth";
 import {
   Card,
   CardContent,
@@ -12,7 +16,9 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useAuthUser } from "../../auth/authContext";
 
 export default function Education() {
@@ -27,6 +33,8 @@ export default function Education() {
     endDate: "",
   });
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     async function getEducation() {
       try {
@@ -35,7 +43,7 @@ export default function Education() {
         );
 
         if (response) {
-          setEducation((prevEducation) => [...prevEducation, ...response]);
+          setEducation(response);
         }
       } catch (error) {
         console.error("Error fetching education data:", error);
@@ -56,10 +64,23 @@ export default function Education() {
     }));
   };
 
+  const validateForm = () => {
+    if (
+      !newEducation.institution ||
+      !newEducation.degree ||
+      !newEducation.startDate
+    ) {
+      setError("Institution, Degree, and Start Date are required.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
     try {
+      if (!validateForm()) return;
       const response = await fetchPostWithAuth(
-        `${process.env.REACT_APP_API_URL}/api/education`, 
+        `${process.env.REACT_APP_API_URL}/api/education`,
         {
           ...newEducation,
           userId: user.id,
@@ -78,18 +99,30 @@ export default function Education() {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetchDeleteWithAuth(
+        `${process.env.REACT_APP_API_URL}/api/education/${id}`
+      );
+
+      if (response.ok) {
+        setEducation((prev) => prev.filter((edu) => edu.id !== id));
+      } else {
+        console.error("Failed to delete education");
+      }
+    } catch (error) {
+      console.error("Error deleting education:", error);
+    }
+  };
+
   return (
     <Box sx={{ padding: 3 }}>
       <Button onClick={handleOpenDialog}>Add</Button>
       <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
-        {education.map((edu, index) => (
+        {education.map((edu) => (
           <Grid
-            key={index}
-            sx={{
-              flex: "1 1 320px",
-              maxWidth: "400px",
-              display: "flex",
-            }}
+            key={edu.id}
+            sx={{ flex: "1 1 320px", maxWidth: "400px", display: "flex" }}
           >
             <Card
               sx={{
@@ -106,7 +139,7 @@ export default function Education() {
                 },
               }}
             >
-              <CardContent sx={{ textAlign: "left" }}>
+              <CardContent sx={{ textAlign: "left", position: "relative" }}>
                 <Typography variant="h6" gutterBottom>
                   {edu.institution}
                 </Typography>
@@ -122,6 +155,12 @@ export default function Education() {
                     ? new Date(edu.endDate).toLocaleDateString()
                     : "Present"}
                 </Typography>
+                <IconButton
+                  onClick={() => handleDelete(edu.id)}
+                  sx={{ position: "absolute", top: 8, right: 8, color: "red" }}
+                >
+                  <DeleteIcon />
+                </IconButton>
               </CardContent>
             </Card>
           </Grid>
@@ -131,9 +170,14 @@ export default function Education() {
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>Add New Education</DialogTitle>
         <DialogContent>
+          {error && (
+            <Typography color="error" sx={{ marginBottom: 2 }}>
+              {error}
+            </Typography>
+          )}
           <TextField
             name="institution"
-            label="Institution"
+            label="Institution *"
             fullWidth
             value={newEducation.institution}
             onChange={handleInputChange}
@@ -141,7 +185,7 @@ export default function Education() {
           />
           <TextField
             name="degree"
-            label="Degree"
+            label="Degree *"
             fullWidth
             value={newEducation.degree}
             onChange={handleInputChange}
@@ -157,15 +201,13 @@ export default function Education() {
           />
           <TextField
             name="startDate"
-            label="Start Date"
+            label="Start Date *"
             type="date"
             fullWidth
             value={newEducation.startDate}
             onChange={handleInputChange}
             sx={{ marginBottom: 2 }}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             name="endDate"
@@ -175,11 +217,10 @@ export default function Education() {
             value={newEducation.endDate}
             onChange={handleInputChange}
             sx={{ marginBottom: 2 }}
-            InputLabelProps={{
-              shrink: true,
-            }}
+            InputLabelProps={{ shrink: true }}
           />
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
             Cancel
