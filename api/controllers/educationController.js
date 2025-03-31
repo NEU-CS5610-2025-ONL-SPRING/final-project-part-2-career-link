@@ -40,6 +40,12 @@ const addEducation = async (req, res) => {
 
     validateUserId(req, education);
 
+    if(!validateEducation(education)){
+      return res
+      .status(400)
+      .json({ error: "Institution, Degree, and Start Date are required." });
+    }
+
     const user = await findUserByUserId(req.userId);
 
     if (!user) {
@@ -98,8 +104,19 @@ const validateUserId = (req, education) => {
   }
 };
 
+const validateEducation = (newEducation) => {
+  if (
+    !newEducation.institution ||
+    !newEducation.degree ||
+    !newEducation.startDate
+  ) {
+      return false;
+  }
+  return true;
+};
+
 module.exports = {
   getEducation,
   addEducation,
-  deleteEducation
+  deleteEducation,
 };
