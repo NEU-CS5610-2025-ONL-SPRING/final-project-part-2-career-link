@@ -39,6 +39,9 @@ const getAllCompaniesService = async () => {
       select: {
         id: true,
         name: true,
+        location: true,
+        website: true,
+        createdAt: true,
       },
     });
     return companies;

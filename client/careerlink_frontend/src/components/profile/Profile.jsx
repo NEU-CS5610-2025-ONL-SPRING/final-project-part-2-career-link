@@ -26,6 +26,7 @@ const ProfileContent = styled(Container)(({ theme }) => ({
   boxShadow: theme.shadows[1],
 }));
 
+
 export default function Profile() {
   const { user } = useAuthUser();
 
