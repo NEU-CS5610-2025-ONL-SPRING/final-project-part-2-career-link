@@ -8,7 +8,7 @@ const jobController = require('./controllers/jobController.js');
 const applicationController = require('./controllers/applicationController.js');
 
 const cookieParser = require('cookie-parser');
-const { requireAuth, requireEmployer } = require("./authMiddleWare");
+const { requireAuth, requireEmployer, requireEmployee } = require("./authMiddleWare");
 require("dotenv").config();
 
 const app = express();
@@ -40,6 +40,9 @@ app.post('/api/jobs', requireAuth, jobController.createJob);
 // Application API's
 app.get('/api/applications/employer', requireEmployer, applicationController.getEmployerApplications);
 app.put('/api/applications/:id/status', requireEmployer, applicationController.updateApplicationStatus);
+
+app.get('/api/applications/:userId', requireEmployee, applicationController.getUserApplications);
+app.post('/api/applications', requireEmployee, applicationController.createApplication);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

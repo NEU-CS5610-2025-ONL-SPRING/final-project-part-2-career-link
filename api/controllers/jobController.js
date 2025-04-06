@@ -4,31 +4,49 @@ const prisma = new PrismaClient();
 const getJobs = async (req, res) => {
   try {
     let where = {};
+    let include = {
+      company: {
+        select: {
+          name: true,
+          location: true,
+          website: true,
+        },
+      },
+      employer: {
+        select: {
+          username: true,
+          email: true,
+        },
+      },
+    };
 
-    if (req.query.postedBy === 'current-user') {
-      where.postedBy = req.user.userId; 
+    // Add search filters (keep these for filtering)
+    if (req.query.title) {
+      where.title = { contains: req.query.title, mode: "insensitive" };
+    }
+
+    if (req.query.location) {
+      where.location = { contains: req.query.location, mode: "insensitive" };
+    }
+
+    if (req.query.minSalary) {
+      where.salary = { gte: parseInt(req.query.minSalary) };
     }
 
     const jobs = await prisma.job.findMany({
       where,
-      include: {
-        employer: {  
-          select: {
-            username: true,
-            email: true
-          }
-        },
-        
-      }
+      include,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     res.json(jobs);
   } catch (error) {
-    console.error('Error fetching jobs:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
-
 const createJob = async (req, res) => {
   try {
     const { title, description, location, salary, requirements } = req.body;
