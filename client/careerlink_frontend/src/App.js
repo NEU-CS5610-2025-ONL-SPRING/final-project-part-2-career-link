@@ -9,6 +9,7 @@ import EmployerDashboard from "./components/employer/Dashboard.jsx";
 import NavBar from "./components/navbar/NavBar.jsx"
 import Companies from "./components/Companies.jsx";
 import { Box } from "@mui/material";
+import EmployeeDashboard from "./components/employee/Dashboard.jsx";
 
 function App() {
 
@@ -42,6 +43,14 @@ function App() {
             element={
               <RequireAuth roles={["EMPLOYER"]}>
                 <EmployerDashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/employee/dashboard"
+            element={
+              <RequireAuth roles={["JOB_SEEKER"]}>
+                <EmployeeDashboard />
               </RequireAuth>
             }
           />
