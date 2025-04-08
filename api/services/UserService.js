@@ -70,6 +70,23 @@ const createUser = async (
   }
 };
 
+const findExperienceByUserId = async (id) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        experiences: true,
+      },
+    });
+    if (!user) return null;
+    return user;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
 const generateUserResponse = (user) => {
   const userData = {
     id: user.id,
@@ -95,6 +112,7 @@ module.exports = {
   findUserByUserId,
   generateUserResponse,
   findEducationByUserId,
+  findExperienceByUserId,
   createUser,
   getRoleEnum,
 };

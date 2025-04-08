@@ -2,6 +2,7 @@ import { useAuthUser } from "../../auth/authContext";
 import Education from "../education/Education";
 import { Box, Typography, Stack, Container, Divider } from "@mui/material";
 import { styled } from "@mui/system";
+import Experience from "../experience/Experience";
 
 // Styled Box for the profile container
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -59,6 +60,10 @@ export default function Profile() {
                   Education
                 </Typography>
                 <Education />
+                <Typography variant="h4" textAlign="left" gutterBottom>
+                Experience
+                </Typography>
+                <Experience />
               </Box>
             </>
           )}
