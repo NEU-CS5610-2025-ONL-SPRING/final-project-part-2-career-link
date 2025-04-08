@@ -93,6 +93,7 @@ const generateUserResponse = (user) => {
     email: user.email,
     username: user.username,
     role: user.role,
+    skills : user.skills || null
   };
   return userData;
 };
