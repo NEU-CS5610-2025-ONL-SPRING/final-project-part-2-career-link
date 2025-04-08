@@ -31,6 +31,7 @@ app.get('/api/users/token', requireAuth, authController.getUserByToken);
 app.get('/api/education/:userId', requireAuth, educationController.getEducation);
 app.post('/api/education/', requireAuth, educationController.addEducation);
 app.delete('/api/education/:id', requireAuth, educationController.deleteEducation);
+app.put('/api/education/:id', requireEmployee, educationController.updateEducation);
 
 
 // Company API's

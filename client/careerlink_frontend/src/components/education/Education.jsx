@@ -3,6 +3,7 @@ import {
   fetchGetWithAuth,
   fetchPostWithAuth,
   fetchDeleteWithAuth,
+  fetchPutWithAuth
 } from "../../auth/fetchWithAuth";
 import {
   Card,
@@ -19,12 +20,14 @@ import {
   IconButton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import { useAuthUser } from "../../auth/authContext";
 
 export default function Education() {
   const [education, setEducation] = useState([]);
   const { user } = useAuthUser();
   const [openDialog, setOpenDialog] = useState(false);
+  const [editingEducationId, setEditingEducationId] = useState(null);
   const [newEducation, setNewEducation] = useState({
     institution: "",
     degree: "",
@@ -32,16 +35,14 @@ export default function Education() {
     startDate: "",
     endDate: "",
   });
-
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function getEducation() {
       try {
         const response = await fetchGetWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/education/` + user.id
+          `${process.env.REACT_APP_API_URL}/api/education/${user.id}`
         );
-
         if (response) {
           setEducation(response);
         }
@@ -53,8 +54,23 @@ export default function Education() {
     getEducation();
   }, [user]);
 
-  const handleOpenDialog = () => setOpenDialog(true);
-  const handleCloseDialog = () => setOpenDialog(false);
+  const handleOpenDialog = () => {
+    setError("");
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setNewEducation({
+      institution: "",
+      degree: "",
+      fieldOfStudy: "",
+      startDate: "",
+      endDate: "",
+    });
+    setEditingEducationId(null);
+    setError("");
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,26 +93,61 @@ export default function Education() {
   };
 
   const handleSubmit = async () => {
-    try {
-      if (!validateForm()) return;
-      const response = await fetchPostWithAuth(
-        `${process.env.REACT_APP_API_URL}/api/education`,
-        {
-          ...newEducation,
-          userId: user.id,
-        }
-      );
+    if (!validateForm()) return;
 
-      if (response.ok) {
-        const addedEducation = await response.json();
-        setEducation((prev) => [...prev, addedEducation]);
-        handleCloseDialog();
+    try {
+      const payload = {
+        ...newEducation,
+        userId: user.id,
+      };
+
+      if (editingEducationId) {
+        const response = await fetchPutWithAuth(
+          `${process.env.REACT_APP_API_URL}/api/education/${editingEducationId}`,
+          payload
+        );
+
+        if (response.ok) {
+          const updated = await response.json();
+          setEducation((prev) =>
+            prev.map((edu) =>
+              edu.id === editingEducationId ? updated : edu
+            )
+          );
+          handleCloseDialog();
+        } else {
+          console.error("Failed to update education");
+        }
       } else {
-        console.error("Failed to add education");
+        const response = await fetchPostWithAuth(
+          `${process.env.REACT_APP_API_URL}/api/education`,
+          payload
+        );
+
+        if (response.ok) {
+          const addedEducation = await response.json();
+          setEducation((prev) => [...prev, addedEducation]);
+          handleCloseDialog();
+        } else {
+          console.error("Failed to add education");
+        }
       }
     } catch (error) {
-      console.error("Error adding education:", error);
+      console.error("Error submitting education:", error);
     }
+  };
+
+  const handleEdit = (edu) => {
+    setNewEducation({
+      institution: edu.institution,
+      degree: edu.degree,
+      fieldOfStudy: edu.fieldOfStudy,
+      startDate: edu.startDate?.slice(0, 10),
+      endDate: edu.endDate?.slice(0, 10) || "",
+    });
+    setEditingEducationId(edu.id);
+    setError("");
+    setOpenDialog(true);
   };
 
   const handleDelete = async (id) => {
@@ -117,10 +168,13 @@ export default function Education() {
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Button onClick={handleOpenDialog}>Add</Button>
-      <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
+      <Button variant="contained" onClick={handleOpenDialog}>
+        Add
+      </Button>
+      <Grid container spacing={3} sx={{ alignItems: "flex-start", mt: 2 }}>
         {education.map((edu) => (
           <Grid
+            item
             key={edu.id}
             sx={{ flex: "1 1 320px", maxWidth: "400px", display: "flex" }}
           >
@@ -147,7 +201,8 @@ export default function Education() {
                   {edu.degree}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  <strong>Field of Study:</strong> {edu.fieldOfStudy || "N/A"}
+                  <strong>Field of Study:</strong>{" "}
+                  {edu.fieldOfStudy || "N/A"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {new Date(edu.startDate).toLocaleDateString()} -{" "}
@@ -156,8 +211,24 @@ export default function Education() {
                     : "Present"}
                 </Typography>
                 <IconButton
+                  onClick={() => handleEdit(edu)}
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 44,
+                    color: "blue",
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+                <IconButton
                   onClick={() => handleDelete(edu.id)}
-                  sx={{ position: "absolute", top: 8, right: 8, color: "red" }}
+                  sx={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    color: "red",
+                  }}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -168,7 +239,9 @@ export default function Education() {
       </Grid>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Add New Education</DialogTitle>
+        <DialogTitle>
+          {editingEducationId ? "Edit Education" : "Add New Education"}
+        </DialogTitle>
         <DialogContent>
           {error && (
             <Typography color="error" sx={{ marginBottom: 2 }}>
@@ -226,7 +299,7 @@ export default function Education() {
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            Submit
+            {editingEducationId ? "Update" : "Submit"}
           </Button>
         </DialogActions>
       </Dialog>
