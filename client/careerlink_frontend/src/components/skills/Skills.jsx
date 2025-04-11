@@ -45,7 +45,7 @@ export default function Skills() {
 
     try {
       const response = await fetchPutWithAuth(
-        `${process.env.REACT_APP_API_URL}/api/user/${user.id}/skills`,
+        `${process.env.REACT_APP_API_URL}/api/user/${user.id}/skill`,
         { skills: skills.join(", ") }
       );
 

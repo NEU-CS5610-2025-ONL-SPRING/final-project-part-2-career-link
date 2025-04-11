@@ -87,6 +87,19 @@ const findExperienceByUserId = async (id) => {
   }
 };
 
+const updateUserSkill = async (userId, skills) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { skills },
+    });
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating user skill:", error);
+    return null;
+  }
+};
+
 const generateUserResponse = (user) => {
   const userData = {
     id: user.id,
@@ -114,6 +127,7 @@ module.exports = {
   generateUserResponse,
   findEducationByUserId,
   findExperienceByUserId,
+  updateUserSkill,
   createUser,
   getRoleEnum,
 };

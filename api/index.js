@@ -7,6 +7,7 @@ const companiesController = require("./controllers/companyController.js");
 const jobController = require("./controllers/jobController.js");
 const applicationController = require("./controllers/applicationController.js");
 const experienceController = require("./controllers/experienceController");
+const skillsController = require("./controllers/skillController.js");
 
 const cookieParser = require("cookie-parser");
 const {
@@ -56,14 +57,18 @@ app.get(
   requireAuth,
   experienceController.getExperience
 );
-app.post("/api/experience/", requireEmployee, experienceController.addExperience);
+app.post(
+  "/api/experience/",
+  requireEmployee,
+  experienceController.addExperience
+);
 app.delete(
   "/api/experience/:id",
   requireEmployee,
   experienceController.deleteExperience
 );
 app.put(
-  "/api/experience/:id",
+  "/api/exprience/:id",
   requireEmployee,
   experienceController.updateExperience
 );
@@ -96,6 +101,14 @@ app.post(
   "/api/applications",
   requireEmployee,
   applicationController.createApplication
+);
+
+//Skills API's
+app.get("/api/user/:userId/skill", requireAuth, skillsController.getSkill);
+app.put(
+  "/api/user/:userId/skill",
+  requireEmployee,
+  skillsController.updateSkill
 );
 
 const PORT = process.env.PORT || 8000;
