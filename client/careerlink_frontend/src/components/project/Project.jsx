@@ -23,33 +23,34 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuthUser } from "../../auth/authContext";
 
-export default function Experience() {
-  const [experiences, setExperiences] = useState([]);
+export default function Project() {
+  const [projects, setProjects] = useState([]);
   const { user } = useAuthUser();
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [newExperience, setNewExperience] = useState({
-    company: "",
-    jobTitle: "",
+  const [newProject, setNewProject] = useState({
+    title: "",
+    description: "",
     startDate: "",
     endDate: "",
-    description: "",
+    technologies: "",
+    projectUrl: "",
   });
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function getExperience() {
+    async function getProjects() {
       try {
         const response = await fetchGetWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/experience/${user.id}`
+          `${process.env.REACT_APP_API_URL}/api/projects/${user.id}`
         );
-        if (response) setExperiences(response);
+        if (response) setProjects(response.projects || []);
       } catch (error) {
-        console.error("Error fetching experience data:", error);
+        console.error("Error fetching project data:", error);
       }
     }
 
-    getExperience();
+    getProjects();
   }, [user]);
 
   const handleOpenDialog = () => {
@@ -61,27 +62,24 @@ export default function Experience() {
     setOpenDialog(false);
     setEditingId(null);
     setError("");
-    setNewExperience({
-      company: "",
-      jobTitle: "",
+    setNewProject({
+      title: "",
+      description: "",
       startDate: "",
       endDate: "",
-      description: "",
+      technologies: "",
+      projectUrl: "",
     });
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewExperience((prev) => ({ ...prev, [name]: value }));
+    setNewProject((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
-    if (
-      !newExperience.company ||
-      !newExperience.jobTitle ||
-      !newExperience.startDate
-    ) {
-      setError("Company, Job Title, and Start Date are required.");
+    if (!newProject.title || !newProject.description) {
+      setError("Title and Description are required.");
       return false;
     }
     return true;
@@ -90,64 +88,65 @@ export default function Experience() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     try {
-      const payload = { ...newExperience, userId: user.id };
+      const payload = { ...newProject, userId: user.id };
 
       if (editingId) {
         const response = await fetchPutWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/experience/${editingId}`,
+          `${process.env.REACT_APP_API_URL}/api/projects/${editingId}`,
           payload
         );
         if (response.ok) {
           const updated = await response.json();
-          setExperiences((prev) =>
-            prev.map((exp) => (exp.id === editingId ? updated : exp))
+          setProjects((prev) =>
+            prev.map((proj) => (proj.id === editingId ? updated : proj))
           );
           handleCloseDialog();
         } else {
-          console.error("Failed to update experience");
+          console.error("Failed to update project");
         }
       } else {
         const response = await fetchPostWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/experience`,
+          `${process.env.REACT_APP_API_URL}/api/projects`,
           payload
         );
         if (response.ok) {
           const added = await response.json();
-          setExperiences((prev) => [...prev, added]);
+          setProjects((prev) => [...prev, added]);
           handleCloseDialog();
         } else {
-          console.error("Failed to add experience");
+          console.error("Failed to add project");
         }
       }
     } catch (error) {
-      console.error("Error submitting experience:", error);
+      console.error("Error submitting project:", error);
     }
   };
 
-  const handleEdit = (exp) => {
-    setNewExperience({
-      company: exp.company,
-      jobTitle: exp.jobTitle,
-      startDate: exp.startDate?.slice(0, 10),
-      endDate: exp.endDate?.slice(0, 10) || "",
-      description: exp.description || "",
+  const handleEdit = (proj) => {
+    setNewProject({
+      title: proj.title,
+      description: proj.description,
+      startDate: proj.startDate?.slice(0, 10),
+      endDate: proj.endDate?.slice(0, 10) || "",
+      technologies: proj.technologies || "",
+      projectUrl: proj.projectUrl || "",
     });
-    setEditingId(exp.id);
+    setEditingId(proj.id);
     setOpenDialog(true);
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await fetchDeleteWithAuth(
-        `${process.env.REACT_APP_API_URL}/api/experience/${id}`
+        `${process.env.REACT_APP_API_URL}/api/projects/${id}`
       );
       if (response.ok) {
-        setExperiences((prev) => prev.filter((exp) => exp.id !== id));
+        setProjects((prev) => prev.filter((proj) => proj.id !== id));
       } else {
-        console.error("Failed to delete experience");
+        console.error("Failed to delete project");
       }
     } catch (error) {
-      console.error("Error deleting experience:", error);
+      console.error("Error deleting project:", error);
     }
   };
 
@@ -157,10 +156,10 @@ export default function Experience() {
         Add
       </Button>
       <Grid container spacing={3} sx={{ mt: 2 }}>
-        {experiences.map((exp) => (
+        {projects.map((proj) => (
           <Grid
             item
-            key={exp.id}
+            key={proj.id}
             sx={{ flex: "1 1 320px", maxWidth: "400px", display: "flex" }}
           >
             <Card
@@ -180,26 +179,36 @@ export default function Experience() {
             >
               <CardContent sx={{ textAlign: "left", position: "relative" }}>
                 <Typography variant="h6" gutterBottom>
-                  {exp.company}
+                  {proj.title}
                 </Typography>
                 <Typography color="text.secondary" gutterBottom>
-                  {exp.jobTitle}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(exp.startDate).toLocaleDateString()} -{" "}
-                  {exp.endDate
-                    ? new Date(exp.endDate).toLocaleDateString()
+                  {new Date(proj.startDate).toLocaleDateString()} -{" "}
+                  {proj.endDate
+                    ? new Date(proj.endDate).toLocaleDateString()
                     : "Present"}
                 </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mt: 1 }}
-                >
-                  {exp.description || "No description"}
+                {proj.technologies && (
+                  <Typography variant="body2" color="text.secondary">
+                    Tech: {proj.technologies}
+                  </Typography>
+                )}
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  {proj.description}
                 </Typography>
+                {proj.projectUrl && (
+                  <Typography
+                    variant="body2"
+                    sx={{ mt: 1 }}
+                    component="a"
+                    href={proj.projectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    🔗 Project Link
+                  </Typography>
+                )}
                 <IconButton
-                  onClick={() => handleEdit(exp)}
+                  onClick={() => handleEdit(proj)}
                   sx={{
                     position: "absolute",
                     top: 8,
@@ -210,7 +219,7 @@ export default function Experience() {
                   <EditIcon />
                 </IconButton>
                 <IconButton
-                  onClick={() => handleDelete(exp.id)}
+                  onClick={() => handleDelete(proj.id)}
                   sx={{ position: "absolute", top: 8, right: 8, color: "red" }}
                 >
                   <DeleteIcon />
@@ -222,9 +231,7 @@ export default function Experience() {
       </Grid>
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>
-          {editingId ? "Edit Experience" : "Add New Experience"}
-        </DialogTitle>
+        <DialogTitle>{editingId ? "Edit Project" : "Add New Project"}</DialogTitle>
         <DialogContent>
           {error && (
             <Typography color="error" sx={{ mb: 2 }}>
@@ -232,69 +239,67 @@ export default function Experience() {
             </Typography>
           )}
           <TextField
-            name="company"
-            label="Company *"
+            name="title"
+            label="Title *"
             fullWidth
-            value={newExperience.company}
-            onChange={handleInputChange}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            name="jobTitle"
-            label="Job Title *"
-            fullWidth
-            value={newExperience.jobTitle}
+            value={newProject.title}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
           />
           <TextField
             name="startDate"
-            label="Start Date *"
+            label="Start Date"
             type="date"
             fullWidth
-            value={newExperience.startDate}
+            value={newProject.startDate}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
             InputLabelProps={{ shrink: true }}
             inputProps={{
-              max: new Date().toISOString().split("T")[0],
-            }}
+                max: new Date().toISOString().split("T")[0],
+              }}
           />
           <TextField
             name="endDate"
             label="End Date"
             type="date"
             fullWidth
-            value={newExperience.endDate}
+            value={newProject.endDate}
             onChange={handleInputChange}
             sx={{ mb: 2 }}
             InputLabelProps={{ shrink: true }}
           />
-          <Typography
-            variant="caption"
-            color="textSecondary"
-            align="right"
-            sx={{ mb: 1 }}
-          >
-            {newExperience.description.length}/255
-          </Typography>
+          <TextField
+            name="technologies"
+            label="Technologies Used"
+            fullWidth
+            value={newProject.technologies}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            name="projectUrl"
+            label="Project URL"
+            fullWidth
+            value={newProject.projectUrl}
+            onChange={handleInputChange}
+            sx={{ mb: 2 }}
+          />
           <TextField
             name="description"
-            label="Description"
+            label="Description *"
             fullWidth
             multiline
             minRows={3}
-            value={newExperience.description}
+            value={newProject.description}
             onChange={handleInputChange}
             inputProps={{ maxLength: 255 }}
             sx={{ mb: 2 }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleSubmit}>
             {editingId ? "Update" : "Submit"}
           </Button>
         </DialogActions>

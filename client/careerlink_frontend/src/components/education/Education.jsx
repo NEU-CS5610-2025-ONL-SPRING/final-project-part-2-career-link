@@ -3,7 +3,7 @@ import {
   fetchGetWithAuth,
   fetchPostWithAuth,
   fetchDeleteWithAuth,
-  fetchPutWithAuth
+  fetchPutWithAuth,
 } from "../../auth/fetchWithAuth";
 import {
   Card,
@@ -110,9 +110,7 @@ export default function Education() {
         if (response.ok) {
           const updated = await response.json();
           setEducation((prev) =>
-            prev.map((edu) =>
-              edu.id === editingEducationId ? updated : edu
-            )
+            prev.map((edu) => (edu.id === editingEducationId ? updated : edu))
           );
           handleCloseDialog();
         } else {
@@ -201,11 +199,12 @@ export default function Education() {
                   {edu.degree}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  <strong>Field of Study:</strong>{" "}
-                  {edu.fieldOfStudy || "N/A"}
+                  <strong>Field of Study:</strong> {edu.fieldOfStudy || "N/A"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {new Date(edu.startDate).toLocaleDateString()} -{" "}
+                  {edu.startDate
+                    ? new Date(edu.startDate).toLocaleDateString() - " "
+                    : " "}
                   {edu.endDate
                     ? new Date(edu.endDate).toLocaleDateString()
                     : "Present"}
@@ -281,6 +280,9 @@ export default function Education() {
             onChange={handleInputChange}
             sx={{ marginBottom: 2 }}
             InputLabelProps={{ shrink: true }}
+            inputProps={{
+              max: new Date().toISOString().split("T")[0],
+            }}
           />
           <TextField
             name="endDate"

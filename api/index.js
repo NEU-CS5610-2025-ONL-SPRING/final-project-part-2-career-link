@@ -8,6 +8,7 @@ const jobController = require("./controllers/jobController.js");
 const applicationController = require("./controllers/applicationController.js");
 const experienceController = require("./controllers/experienceController");
 const skillsController = require("./controllers/skillController.js");
+const projectController = require("./controllers/projectController.js");
 
 const cookieParser = require("cookie-parser");
 const {
@@ -50,6 +51,19 @@ app.put(
   requireEmployee,
   educationController.updateEducation
 );
+
+// Project API's
+app.get("/api/projects/:userId", requireAuth, projectController.getProjects);
+
+app.post("/api/projects", requireEmployee, projectController.addProject);
+
+app.delete(
+  "/api/projects/:id",
+  requireEmployee,
+  projectController.deleteProject
+);
+
+app.put("/api/projects/:id", requireEmployee, projectController.updateProject);
 
 // Experience APIs
 app.get(

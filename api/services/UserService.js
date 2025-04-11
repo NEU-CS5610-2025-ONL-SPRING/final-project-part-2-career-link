@@ -46,6 +46,25 @@ const findEducationByUserId = async (id) => {
   }
 };
 
+const findProjectsByUserId = async (id) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        projects: true,
+      },
+    });
+
+    if (!user) return null;
+    return user;
+  } catch (e) {
+    console.error("Error in findProjectsByUserId:", e);
+    return null;
+  }
+};
+
 const createUser = async (
   username,
   email,
@@ -127,6 +146,7 @@ module.exports = {
   generateUserResponse,
   findEducationByUserId,
   findExperienceByUserId,
+  findProjectsByUserId,
   updateUserSkill,
   createUser,
   getRoleEnum,
