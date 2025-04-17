@@ -138,5 +138,8 @@ app.post(
 
 app.get("/api/resume/:userId", requireAuth, resumeController.getResumeUrl); 
 
+app.get("/api/resume/analyze/:userId", requireAuth, resumeController.analyzeResume);
+
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

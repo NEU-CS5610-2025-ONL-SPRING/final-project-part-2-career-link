@@ -5,7 +5,13 @@ import {
   Typography,
   Card,
   CardContent,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { fetchFormWithAuth, fetchGetWithAuth } from "../../auth/fetchWithAuth";
@@ -16,6 +22,10 @@ export default function Resume({ onUploadComplete }) {
   const [resumeUrl, setResumeUrl] = useState("");
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [openReviewDialog, setOpenReviewDialog] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+  const [loadingReview, setLoadingReview] = useState(false);
+
   const { user } = useAuthUser();
 
   useEffect(() => {
@@ -24,15 +34,7 @@ export default function Resume({ onUploadComplete }) {
         const data = await fetchGetWithAuth(
           `${process.env.REACT_APP_API_URL}/api/resume/${user.id}`
         );
-
-
-        if (!data) {
-          throw new Error("Failed to fetch resume URL");
-        }
-
-        console.log(data);
-        if (data.resumeUrl) {
-          console.log(data.resumeUrl)
+        if (data?.resumeUrl) {
           setResumeUrl(data.resumeUrl);
         }
       } catch (err) {
@@ -41,8 +43,8 @@ export default function Resume({ onUploadComplete }) {
       }
     };
 
-    fetchResumeUrl(); 
-  }, [user.id]); 
+    fetchResumeUrl();
+  }, [user.id]);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -67,9 +69,7 @@ export default function Resume({ onUploadComplete }) {
         formData
       );
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
+      if (!response.ok) throw new Error("Upload failed");
 
       const data = await response.json();
       setResumeUrl(data.resumeUrl);
@@ -81,6 +81,46 @@ export default function Resume({ onUploadComplete }) {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleAnalyzeResume = async () => {
+    try {
+      setError("");
+      setReviewText(""); // clear old result
+      setLoadingReview(true);
+      setOpenReviewDialog(true); // show dialog immediately
+  
+      const data = await fetchGetWithAuth(
+        `${process.env.REACT_APP_API_URL}/api/resume/analyze/${user.id}`
+      );
+  
+      if (!data) throw new Error("Failed to analyze resume");
+  
+      const cleaned = data.review
+        .replace(/\*\*(.*?)\*\*/g, "$1") // bold
+        .replace(/\*(.*?)\*/g, "$1") // italics
+        .replace(/`{1,3}(.*?)`{1,3}/g, "$1") // inline code
+        .replace(/^### (.*$)/gim, "$1") // headers
+        .replace(/^## (.*$)/gim, "$1")
+        .replace(/^# (.*$)/gim, "$1")
+        .replace(/>\s?(.*)/g, "$1") // blockquotes
+        .replace(/[-*+] +/g, "• ") // unordered list
+        .replace(/\n{2,}/g, "\n\n") // spacing
+        .trim();
+  
+      setReviewText(cleaned);
+    } catch (err) {
+      console.error("AI Resume Analysis Error:", err);
+      setReviewText("❌ Could not analyze resume. Try again later.");
+    } finally {
+      setLoadingReview(false);
+    }
+  };
+  
+
+  const handleCloseReviewDialog = () => {
+    setOpenReviewDialog(false);
+    setReviewText("");
   };
 
   return (
@@ -98,7 +138,12 @@ export default function Resume({ onUploadComplete }) {
               startIcon={<UploadFileIcon />}
             >
               Choose File
-              <input type="file" hidden onChange={handleFileChange} accept=".pdf,.doc,.docx" />
+              <input
+                type="file"
+                hidden
+                onChange={handleFileChange}
+                accept=".pdf,.doc,.docx"
+              />
             </Button>
             {file && (
               <Typography variant="body2" noWrap>
@@ -130,10 +175,40 @@ export default function Resume({ onUploadComplete }) {
                   View Resume
                 </a>
               </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleAnalyzeResume}
+              >
+                🔍 Analyze Resume using AI
+              </Button>
             </Box>
           )}
         </CardContent>
       </Card>
+
+      <Dialog
+        open={openReviewDialog}
+        onClose={handleCloseReviewDialog}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>🧠 AI Resume Feedback</DialogTitle>
+        <DialogContent dividers>
+          {loadingReview ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+              {reviewText}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseReviewDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

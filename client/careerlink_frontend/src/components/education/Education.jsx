@@ -202,9 +202,7 @@ export default function Education() {
                   <strong>Field of Study:</strong> {edu.fieldOfStudy || "N/A"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {edu.startDate
-                    ? new Date(edu.startDate).toLocaleDateString() - " "
-                    : " "}
+                  {new Date(edu.startDate).toLocaleDateString()} -{" "}
                   {edu.endDate
                     ? new Date(edu.endDate).toLocaleDateString()
                     : "Present"}
