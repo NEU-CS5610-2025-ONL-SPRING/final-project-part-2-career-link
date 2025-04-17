@@ -29,6 +29,50 @@ const createEducation = async (user, education) => {
   }
 };
 
+const getEducationById = async (id) => {
+  try {
+    const education = await prisma.education.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    return education;
+  } catch (e) {
+    console.error("Error finding education:", e);
+    throw new Error("Unable to find education record");
+  }
+};
+
+const updateEducationById = async (id, educationData) => {
+  try {
+    let startDate;
+    let endDate;
+    if (educationData.startDate) {
+      startDate = new Date(educationData.startDate).toISOString();
+    }
+    if (educationData.endDate) {
+      endDate = new Date(educationData.endDate).toISOString();
+    }
+    const updatedEducation = await prisma.education.update({
+      where: {
+        id: id,
+      },
+      data: {
+        institution: educationData.institution,
+        degree: educationData.degree,
+        fieldOfStudy: educationData.fieldOfStudy || null,
+        startDate: startDate,
+        endDate: endDate || null,
+      },
+    });
+    return updatedEducation;
+  } catch (e) {
+    console.error("Error updating education:", e);
+    throw new Error("Unable to update education record");
+  }
+};
+
+
 const removeEducation = async (id) => {
   try {
     const edu = await prisma.education.delete({
@@ -46,4 +90,6 @@ const removeEducation = async (id) => {
 module.exports = {
   createEducation,
   removeEducation,
+  getEducationById,
+  updateEducationById
 };

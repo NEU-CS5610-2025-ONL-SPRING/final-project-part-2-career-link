@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   fetchGetWithAuth,
   fetchPostWithAuth,
-  fetchDeleteWithAuth,
   fetchPutWithAuth,
+  fetchDeleteWithAuth,
 } from "../../auth/fetchWithAuth";
 import {
   Card,
@@ -23,35 +23,33 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useAuthUser } from "../../auth/authContext";
 
-export default function Education() {
-  const [education, setEducation] = useState([]);
+export default function Experience() {
+  const [experiences, setExperiences] = useState([]);
   const { user } = useAuthUser();
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingEducationId, setEditingEducationId] = useState(null);
-  const [newEducation, setNewEducation] = useState({
-    institution: "",
-    degree: "",
-    fieldOfStudy: "",
+  const [editingId, setEditingId] = useState(null);
+  const [newExperience, setNewExperience] = useState({
+    company: "",
+    jobTitle: "",
     startDate: "",
     endDate: "",
+    description: "",
   });
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function getEducation() {
+    async function getExperience() {
       try {
         const response = await fetchGetWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/education/${user.id}`
+          `${process.env.REACT_APP_API_URL}/api/experience/${user.id}`
         );
-        if (response) {
-          setEducation(response);
-        }
+        if (response) setExperiences(response);
       } catch (error) {
-        console.error("Error fetching education data:", error);
+        console.error("Error fetching experience data:", error);
       }
     }
 
-    getEducation();
+    getExperience();
   }, [user]);
 
   const handleOpenDialog = () => {
@@ -61,32 +59,29 @@ export default function Education() {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setNewEducation({
-      institution: "",
-      degree: "",
-      fieldOfStudy: "",
+    setEditingId(null);
+    setError("");
+    setNewExperience({
+      company: "",
+      jobTitle: "",
       startDate: "",
       endDate: "",
+      description: "",
     });
-    setEditingEducationId(null);
-    setError("");
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewEducation((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setNewExperience((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
     if (
-      !newEducation.institution ||
-      !newEducation.degree ||
-      !newEducation.startDate
+      !newExperience.company ||
+      !newExperience.jobTitle ||
+      !newExperience.startDate
     ) {
-      setError("Institution, Degree, and Start Date are required.");
+      setError("Company, Job Title, and Start Date are required.");
       return false;
     }
     return true;
@@ -94,73 +89,65 @@ export default function Education() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
     try {
-      const payload = {
-        ...newEducation,
-        userId: user.id,
-      };
+      const payload = { ...newExperience, userId: user.id };
 
-      if (editingEducationId) {
+      if (editingId) {
         const response = await fetchPutWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/education/${editingEducationId}`,
+          `${process.env.REACT_APP_API_URL}/api/experience/${editingId}`,
           payload
         );
-
         if (response.ok) {
           const updated = await response.json();
-          setEducation((prev) =>
-            prev.map((edu) => (edu.id === editingEducationId ? updated : edu))
+          setExperiences((prev) =>
+            prev.map((exp) => (exp.id === editingId ? updated : exp))
           );
           handleCloseDialog();
         } else {
-          console.error("Failed to update education");
+          console.error("Failed to update experience");
         }
       } else {
         const response = await fetchPostWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/education`,
+          `${process.env.REACT_APP_API_URL}/api/experience`,
           payload
         );
-
         if (response.ok) {
-          const addedEducation = await response.json();
-          setEducation((prev) => [...prev, addedEducation]);
+          const added = await response.json();
+          setExperiences((prev) => [...prev, added]);
           handleCloseDialog();
         } else {
-          console.error("Failed to add education");
+          console.error("Failed to add experience");
         }
       }
     } catch (error) {
-      console.error("Error submitting education:", error);
+      console.error("Error submitting experience:", error);
     }
   };
 
-  const handleEdit = (edu) => {
-    setNewEducation({
-      institution: edu.institution,
-      degree: edu.degree,
-      fieldOfStudy: edu.fieldOfStudy,
-      startDate: edu.startDate?.slice(0, 10),
-      endDate: edu.endDate?.slice(0, 10) || "",
+  const handleEdit = (exp) => {
+    setNewExperience({
+      company: exp.company,
+      jobTitle: exp.jobTitle,
+      startDate: exp.startDate?.slice(0, 10),
+      endDate: exp.endDate?.slice(0, 10) || "",
+      description: exp.description || "",
     });
-    setEditingEducationId(edu.id);
-    setError("");
+    setEditingId(exp.id);
     setOpenDialog(true);
   };
 
   const handleDelete = async (id) => {
     try {
       const response = await fetchDeleteWithAuth(
-        `${process.env.REACT_APP_API_URL}/api/education/${id}`
+        `${process.env.REACT_APP_API_URL}/api/experience/${id}`
       );
-
       if (response.ok) {
-        setEducation((prev) => prev.filter((edu) => edu.id !== id));
+        setExperiences((prev) => prev.filter((exp) => exp.id !== id));
       } else {
-        console.error("Failed to delete education");
+        console.error("Failed to delete experience");
       }
     } catch (error) {
-      console.error("Error deleting education:", error);
+      console.error("Error deleting experience:", error);
     }
   };
 
@@ -169,11 +156,11 @@ export default function Education() {
       <Button variant="contained" onClick={handleOpenDialog}>
         Add
       </Button>
-      <Grid container spacing={3} sx={{ alignItems: "flex-start", mt: 2 }}>
-        {education.map((edu) => (
+      <Grid container spacing={3} sx={{ mt: 2 }}>
+        {experiences.map((exp) => (
           <Grid
             item
-            key={edu.id}
+            key={exp.id}
             sx={{ flex: "1 1 320px", maxWidth: "400px", display: "flex" }}
           >
             <Card
@@ -193,24 +180,26 @@ export default function Education() {
             >
               <CardContent sx={{ textAlign: "left", position: "relative" }}>
                 <Typography variant="h6" gutterBottom>
-                  {edu.institution}
+                  {exp.company}
                 </Typography>
                 <Typography color="text.secondary" gutterBottom>
-                  {edu.degree}
+                  {exp.jobTitle}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  <strong>Field of Study:</strong> {edu.fieldOfStudy || "N/A"}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {edu.startDate
-                    ? new Date(edu.startDate).toLocaleDateString() - " "
-                    : " "}
-                  {edu.endDate
-                    ? new Date(edu.endDate).toLocaleDateString()
+                  {new Date(exp.startDate).toLocaleDateString()} -{" "}
+                  {exp.endDate
+                    ? new Date(exp.endDate).toLocaleDateString()
                     : "Present"}
                 </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 1 }}
+                >
+                  {exp.description || "No description"}
+                </Typography>
                 <IconButton
-                  onClick={() => handleEdit(edu)}
+                  onClick={() => handleEdit(exp)}
                   sx={{
                     position: "absolute",
                     top: 8,
@@ -221,13 +210,8 @@ export default function Education() {
                   <EditIcon />
                 </IconButton>
                 <IconButton
-                  onClick={() => handleDelete(edu.id)}
-                  sx={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    color: "red",
-                  }}
+                  onClick={() => handleDelete(exp.id)}
+                  sx={{ position: "absolute", top: 8, right: 8, color: "red" }}
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -239,46 +223,38 @@ export default function Education() {
 
       <Dialog open={openDialog} onClose={handleCloseDialog}>
         <DialogTitle>
-          {editingEducationId ? "Edit Education" : "Add New Education"}
+          {editingId ? "Edit Experience" : "Add New Experience"}
         </DialogTitle>
         <DialogContent>
           {error && (
-            <Typography color="error" sx={{ marginBottom: 2 }}>
+            <Typography color="error" sx={{ mb: 2 }}>
               {error}
             </Typography>
           )}
           <TextField
-            name="institution"
-            label="Institution *"
+            name="company"
+            label="Company *"
             fullWidth
-            value={newEducation.institution}
+            value={newExperience.company}
             onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
+            sx={{ mb: 2 }}
           />
           <TextField
-            name="degree"
-            label="Degree *"
+            name="jobTitle"
+            label="Job Title *"
             fullWidth
-            value={newEducation.degree}
+            value={newExperience.jobTitle}
             onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
-          />
-          <TextField
-            name="fieldOfStudy"
-            label="Field of Study"
-            fullWidth
-            value={newEducation.fieldOfStudy}
-            onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
+            sx={{ mb: 2 }}
           />
           <TextField
             name="startDate"
             label="Start Date *"
             type="date"
             fullWidth
-            value={newEducation.startDate}
+            value={newExperience.startDate}
             onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
+            sx={{ mb: 2 }}
             InputLabelProps={{ shrink: true }}
             inputProps={{
               max: new Date().toISOString().split("T")[0],
@@ -289,19 +265,37 @@ export default function Education() {
             label="End Date"
             type="date"
             fullWidth
-            value={newEducation.endDate}
+            value={newExperience.endDate}
             onChange={handleInputChange}
-            sx={{ marginBottom: 2 }}
+            sx={{ mb: 2 }}
             InputLabelProps={{ shrink: true }}
           />
+          <Typography
+            variant="caption"
+            color="textSecondary"
+            align="right"
+            sx={{ mb: 1 }}
+          >
+            {newExperience.description.length}/255
+          </Typography>
+          <TextField
+            name="description"
+            label="Description"
+            fullWidth
+            multiline
+            minRows={3}
+            value={newExperience.description}
+            onChange={handleInputChange}
+            inputProps={{ maxLength: 255 }}
+            sx={{ mb: 2 }}
+          />
         </DialogContent>
-
         <DialogActions>
           <Button onClick={handleCloseDialog} color="primary">
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary">
-            {editingEducationId ? "Update" : "Submit"}
+            {editingId ? "Update" : "Submit"}
           </Button>
         </DialogActions>
       </Dialog>

@@ -46,6 +46,25 @@ const findEducationByUserId = async (id) => {
   }
 };
 
+const findProjectsByUserId = async (id) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        projects: true,
+      },
+    });
+
+    if (!user) return null;
+    return user;
+  } catch (e) {
+    console.error("Error in findProjectsByUserId:", e);
+    return null;
+  }
+};
+
 const createUser = async (
   username,
   email,
@@ -70,12 +89,43 @@ const createUser = async (
   }
 };
 
+const findExperienceByUserId = async (id) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        experiences: true,
+      },
+    });
+    if (!user) return null;
+    return user;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+const updateUserSkill = async (userId, skills) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { skills },
+    });
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating user skill:", error);
+    return null;
+  }
+};
+
 const generateUserResponse = (user) => {
   const userData = {
     id: user.id,
     email: user.email,
     username: user.username,
     role: user.role,
+    skills : user.skills || null
   };
   return userData;
 };
@@ -95,6 +145,9 @@ module.exports = {
   findUserByUserId,
   generateUserResponse,
   findEducationByUserId,
+  findExperienceByUserId,
+  findProjectsByUserId,
+  updateUserSkill,
   createUser,
   getRoleEnum,
 };

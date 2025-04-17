@@ -1,68 +1,114 @@
 import { useAuthUser } from "../../auth/authContext";
 import Education from "../education/Education";
-import { Box, Typography, Stack, Container, Divider } from "@mui/material";
+import Experience from "../experience/Experience";
+import Skills from "../skills/Skills";
+import Project from "../project/Project";
+
+import {
+  Box,
+  Typography,
+  Stack,
+  Container,
+  Paper,
+  useTheme,
+} from "@mui/material";
 import { styled } from "@mui/system";
 
-// Styled Box for the profile container
+// Page container with background gradient
 const ProfileContainer = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
-  display: "flex",
-  flexDirection: "column",  
-  justifyContent: "flex-start",
-  alignItems: "center",  
   background: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
   color: theme.palette.primary.contrastText,
-  padding: theme.spacing(4),
+  paddingTop: theme.spacing(6),
+  paddingBottom: theme.spacing(6),
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
 }));
 
+// Main content wrapper
 const ProfileContent = styled(Container)(({ theme }) => ({
-  maxWidth: "800px",
   width: "100%",
+  maxWidth: "1000px",
+  backgroundColor: theme.palette.background.default,
+  borderRadius: theme.spacing(2),
+  boxShadow: theme.shadows[3],
   padding: theme.spacing(4),
-  backgroundColor: theme.palette.background.paper,
-  color: theme.palette.text.primary,
-  borderRadius: theme.spacing(1),
-  border: `1px solid ${theme.palette.divider}`,
-  boxShadow: theme.shadows[1],
 }));
 
+// Styled section with card appearance
+const SectionCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: theme.spacing(1),
+  marginBottom: theme.spacing(4),
+  boxShadow: theme.shadows[1],
+  backgroundColor: theme.palette.background.paper,
+}));
 
 export default function Profile() {
   const { user } = useAuthUser();
+  const theme = useTheme();
 
   return (
     <ProfileContainer>
-      <Typography variant="h3" textAlign="center" gutterBottom sx={{ marginTop: 4 }}>
-        Profile
-      </Typography>
-
       <ProfileContent>
-        <Typography variant="h4" textAlign="left" gutterBottom>
-          Basic Info
+        <Typography
+          variant="h3"
+          align="center"
+          gutterBottom
+          sx={{ fontWeight: "bold", color: theme.palette.primary.main }}
+        >
+          Profile
         </Typography>
-        <Stack spacing={2}>
-          <Typography variant="body1">
-            <strong>Name:</strong> {user?.username}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Email:</strong> {user?.email}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Role:</strong> {user?.role}
-          </Typography>
 
-          {user?.role === "JOB_SEEKER" && (
-            <>
-              <Divider sx={{ marginY: 3 }} />
-              <Box>
-                <Typography variant="h4" textAlign="left" gutterBottom>
-                  Education
-                </Typography>
-                <Education />
-              </Box>
-            </>
-          )}
-        </Stack>
+        <SectionCard>
+          <Typography variant="h5" gutterBottom>
+            Basic Info
+          </Typography>
+          <Stack spacing={1}>
+            <Typography variant="body1">
+              <strong>Name:</strong> {user?.username}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Email:</strong> {user?.email}
+            </Typography>
+            <Typography variant="body1">
+              <strong>Role:</strong> {user?.role}
+            </Typography>
+          </Stack>
+        </SectionCard>
+
+        {user?.role === "JOB_SEEKER" && (
+          <>
+            <SectionCard>
+              <Typography variant="h5" gutterBottom>
+                Skills
+              </Typography>
+              <Skills />
+            </SectionCard>
+
+            <SectionCard>
+              <Typography variant="h5" gutterBottom>
+                Education
+              </Typography>
+              <Education />
+            </SectionCard>
+
+            <SectionCard>
+              <Typography variant="h5" gutterBottom>
+                Experience
+              </Typography>
+              <Experience />
+            </SectionCard>
+
+            <SectionCard>
+              <Typography variant="h5" gutterBottom>
+                Projects
+              </Typography>
+              <Project />
+            </SectionCard>
+          </>
+        )}
       </ProfileContent>
     </ProfileContainer>
   );

@@ -38,6 +38,16 @@ export async function fetchPostWithAuth(url, data) {
   });
 }
 
+export async function fetchPutWithAuth(url, data) {
+  return fetchWithAuth(url, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 export async function fetchDeleteWithAuth(url) {
   return fetchWithAuth(url, {
     method: "DELETE",
