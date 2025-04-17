@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/system";
+import Resume from "../resume/Resume";
 
 // Page container with background gradient
 const ProfileContainer = styled(Box)(({ theme }) => ({
@@ -85,6 +86,13 @@ export default function Profile() {
                 Skills
               </Typography>
               <Skills />
+            </SectionCard>
+
+            <SectionCard>
+              <Typography variant="h5" gutterBottom>
+                Resume
+              </Typography>
+              <Resume />
             </SectionCard>
 
             <SectionCard>

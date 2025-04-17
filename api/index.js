@@ -9,6 +9,8 @@ const applicationController = require("./controllers/applicationController.js");
 const experienceController = require("./controllers/experienceController");
 const skillsController = require("./controllers/skillController.js");
 const projectController = require("./controllers/projectController.js");
+const upload = require("./cloudinaryStorage.js");
+const resumeController = require("./controllers/resumeController");
 
 const cookieParser = require("cookie-parser");
 const {
@@ -124,6 +126,17 @@ app.put(
   requireEmployee,
   skillsController.updateSkill
 );
+
+//Resume API
+
+app.post(
+  "/api/resume",
+  requireEmployee,
+  upload.single("file"),
+  resumeController.uploadResume
+);
+
+app.get("/api/resume/:userId", requireAuth, resumeController.getResumeUrl); 
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

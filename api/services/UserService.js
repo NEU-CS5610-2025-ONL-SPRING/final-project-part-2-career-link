@@ -125,7 +125,7 @@ const generateUserResponse = (user) => {
     email: user.email,
     username: user.username,
     role: user.role,
-    skills : user.skills || null
+    skills : user.skills || null,
   };
   return userData;
 };
@@ -140,6 +140,19 @@ const getRoleEnum = (role) => {
   return roleEnum;
 };
 
+const updateUserResumeUrl = async (userId, resumeUrl) => {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { resumeUrl },
+    });
+    return updatedUser;
+  } catch (error) {
+    console.error("Error updating resume URL:", error);
+    return null;
+  }
+};
+
 module.exports = {
   findUser,
   findUserByUserId,
@@ -150,4 +163,5 @@ module.exports = {
   updateUserSkill,
   createUser,
   getRoleEnum,
+  updateUserResumeUrl
 };

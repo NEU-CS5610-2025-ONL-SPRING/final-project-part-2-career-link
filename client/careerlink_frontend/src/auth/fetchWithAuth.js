@@ -57,3 +57,10 @@ export async function fetchDeleteWithAuth(url) {
   });
 }
 
+export async function fetchFormWithAuth(url, formData) {
+  return fetchWithAuth(url, {
+    method: "POST",
+    body: formData,
+  });
+}
+
