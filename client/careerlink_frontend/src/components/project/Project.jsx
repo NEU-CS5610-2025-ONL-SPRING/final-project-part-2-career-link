@@ -200,7 +200,11 @@ export default function Project() {
                     variant="body2"
                     sx={{ mt: 1 }}
                     component="a"
-                    href={proj.projectUrl}
+                    href={
+                      proj.projectUrl.startsWith("http://") || proj.projectUrl.startsWith("https://")
+                        ? proj.projectUrl
+                        : `https://${proj.projectUrl}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                   >

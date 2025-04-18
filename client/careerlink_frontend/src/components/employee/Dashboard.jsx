@@ -47,40 +47,47 @@ const EmployeeDashboard = () => {
     });
 
     // Fetch data based on active tab
+    const fetchJobs = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+      
+          const params = {};
+          if (filters.title.trim()) params.title = filters.title;
+          if (filters.location.trim()) params.location = filters.location;
+          if (filters.minSalary.trim()) params.minSalary = filters.minSalary;
+      
+          const jobsRes = await axios.get(`${API_BASE_URL}/api/jobs`, {
+            params,
+            withCredentials: true
+          });
+      
+          setJobs(jobsRes.data);
+        } catch (err) {
+          setError(err.response?.data?.message || 'Failed to fetch jobs');
+        } finally {
+          setLoading(false);
+        }
+      };
+
     useEffect(() => {
-        const fetchData = async () => {
+        fetchJobs();
+    }, []);
+    
+    useEffect(() => {
+        const fetchApplications = async () => {
             try {
-                setLoading(true);
-                setError(null);
-
-                if (activeTab === 0) {
-                    const params = {
-                        title: filters.title || undefined,
-                        location: filters.location || undefined,
-                        minSalary: filters.minSalary || undefined
-                    };
-                    const jobsRes = await axios.get(`${API_BASE_URL}/api/jobs`, {
-                        params,
-                        withCredentials: true
-                    });
-                    setJobs(jobsRes.data);
-                } else if (activeTab === 1) {
-                    const appsRes = await axios.get(`${API_BASE_URL}/api/applications/${user.id}`, {
-                        withCredentials: true
-                    });
-                    setApplications(appsRes.data);
-                }
-
-                setLoading(false);
+                const appsRes = await axios.get(`${API_BASE_URL}/api/applications/${user.id}`, {
+                    withCredentials: true
+                });
+                setApplications(appsRes.data);
             } catch (err) {
-                setError(err.response?.data?.message || 'Failed to fetch data');
-                setLoading(false);
+                console.error('Failed to fetch applications:', err);
             }
         };
-
-
-        fetchData();
-    }, [activeTab, user.id, filters]);
+    
+        fetchApplications();
+    }, [user.id]);
 
     const handleTabChange = (event, newValue) => {
         setActiveTab(newValue);
@@ -120,8 +127,8 @@ const EmployeeDashboard = () => {
 
     const handleFilterSubmit = (e) => {
         e.preventDefault();
-        // Tab change will trigger the useEffect with new filters
-        setActiveTab(0);
+        setActiveTab(0); 
+        fetchJobs(); 
     };
 
     const getStatusColor = (status) => {
@@ -165,7 +172,6 @@ const EmployeeDashboard = () => {
             >
                 <Tab label="Browse Jobs" />
                 <Tab label="My Applications" />
-                <Tab label="My Profile" />
             </Tabs>
 
             {activeTab === 0 && (
@@ -366,57 +372,7 @@ const EmployeeDashboard = () => {
                 </>
             )}
 
-            {activeTab === 2 && (
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <Card elevation={3}>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    My Profile
-                                </Typography>
-                                <Divider sx={{ my: 2 }} />
-
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12} md={6}>
-                                        <Typography variant="subtitle1" gutterBottom>
-                                            <strong>Basic Information</strong>
-                                        </Typography>
-                                        <Typography>
-                                            <strong>Name:</strong> {user.username}
-                                        </Typography>
-                                        <Typography>
-                                            <strong>Email:</strong> {user.email}
-                                        </Typography>
-                                        <Typography sx={{ mt: 1 }}>
-                                            <strong>Role:</strong> {user.role === 'JOB_SEEKER' ? 'Job Seeker' : 'Employer'}
-                                        </Typography>
-                                    </Grid>
-
-                                    <Grid item xs={12} md={6}>
-                                        <Typography variant="subtitle1" gutterBottom>
-                                            <strong>Professional Details</strong>
-                                        </Typography>
-                                        <Typography>
-                                            <strong>Skills:</strong> {user.skills || 'Not specified'}
-                                        </Typography>
-                                        {user.resumeUrl && (
-                                            <Button
-                                                variant="outlined"
-                                                startIcon={<ResumeIcon />}
-                                                sx={{ mt: 1 }}
-                                                href={user.resumeUrl}
-                                                target="_blank"
-                                            >
-                                                View Resume
-                                            </Button>
-                                        )}
-                                    </Grid>
-                                </Grid>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            )}
+            
         </Container>
     );
 };
