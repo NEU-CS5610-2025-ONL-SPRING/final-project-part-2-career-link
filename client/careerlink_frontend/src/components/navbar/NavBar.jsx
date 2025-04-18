@@ -145,9 +145,14 @@ const NavBar = () => {
               gap: 1
             }}>
               <NavButton component={Link} to="/">Home</NavButton>
-              {isAuthenticated && (
-                <NavButton component={Link} to={getDashboardPath()}>Dashboard</NavButton>
-              )}
+              {isAuthenticated && hasRole('JOB_SEEKER') && (
+  <>
+    <NavButton component={Link} to="/employee/dashboard/jobs">Browse Jobs</NavButton>
+<NavButton component={Link} to="/employee/dashboard/applications">My Applications</NavButton>
+
+  </>
+)}
+
               <NavButton component={Link} to="/companies">Companies</NavButton>
 
             </Box>

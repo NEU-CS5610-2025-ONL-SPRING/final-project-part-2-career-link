@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Tooltip } from '@mui/material';
 import {
     Container,
@@ -34,7 +35,18 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const EmployeeDashboard = () => {
     const { user } = useAuthUser();
-    const [activeTab, setActiveTab] = useState(0);
+const location = useLocation();
+const queryParams = new URLSearchParams(location.search);
+const defaultTab = parseInt(queryParams.get("tab")) || 0;
+const [activeTab, setActiveTab] = useState(defaultTab);
+useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const tabParam = parseInt(queryParams.get("tab"));
+    if (!isNaN(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search]);
+  
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [jobs, setJobs] = useState([]);
