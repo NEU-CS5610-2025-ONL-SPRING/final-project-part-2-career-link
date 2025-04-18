@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import {
   Container, Typography, Box, Grid, Card, CardContent, Chip,
   CircularProgress, Alert, Button, TextField, Paper, List, ListItemButton, ListItemText
@@ -15,6 +17,9 @@ import {
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const BrowseJobs = () => {
+    const theme = useTheme();
+const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const { user } = useAuthUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,9 +109,19 @@ const BrowseJobs = () => {
       ) : error ? (
         <Alert severity="error">{error}</Alert>
       ) : (
-        <Box sx={{ display: 'flex', height: '70vh', gap: 2 }}>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            height: isMobile ? 'auto' : '70vh',
+            gap: 2
+          }}>
+          
           {/* Left List */}
-          <Paper sx={{ width: '50%', overflowY: 'auto' }}>
+          <Paper sx={{
+  width: isMobile ? '100%' : '50%',
+  overflowY: 'auto',
+  p: isMobile ? 2 : 3
+}}>
             <List>
               {jobs.map(job => (
                 <ListItemButton key={job.id} selected={selectedJob?.id === job.id} onClick={() => setSelectedJob(job)}>
@@ -117,7 +132,11 @@ const BrowseJobs = () => {
           </Paper>
 
           {/* Right Detail */}
-          <Paper sx={{ width: '50%', overflowY: 'auto', p: 3 }}>
+          <Paper sx={{
+  width: isMobile ? '100%' : '50%',
+  overflowY: 'auto',
+  p: isMobile ? 2 : 3
+}}>
             {selectedJob ? (
               <>
                 <Typography variant="h5" gutterBottom>{selectedJob.title}</Typography>
