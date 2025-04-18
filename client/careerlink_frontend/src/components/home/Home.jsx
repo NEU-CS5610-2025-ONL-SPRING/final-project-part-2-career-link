@@ -99,7 +99,7 @@ const Home = () => {
                 >
                     Why Choose <span style={{ color: theme.palette.primary.main }}>CareerLink</span>?
                 </Typography>
-                <Grid container spacing={4}>
+                <Grid container spacing={4} justifyContent="center" wrap="wrap">
                     {[
                         {
                             title: "For Job Seekers",
@@ -134,7 +134,7 @@ const Home = () => {
                     ].map((feature, index) => (
                         <Grid item xs={12} md={4} key={index}>
                             <Slide direction="up" in timeout={(index + 1) * 300}>
-                                <Box>
+                <Box sx={{ minWidth: 0, flexGrow: 1 }}>
                                     <FeatureCard elevation={4}>
                                         <Typography
                                             variant="h4"
@@ -142,10 +142,10 @@ const Home = () => {
                                             gutterBottom
                                             sx={{
                                                 fontWeight: 600,
-                                                display: 'flex',
-                                                alignItems: 'center',
+                        display: "flex",
+                        alignItems: "center",
                                                 gap: 2,
-                                                color: theme.palette.primary.main
+                        color: theme.palette.primary.main,
                                             }}
                                         >
                                             {feature.icon} {feature.title}
