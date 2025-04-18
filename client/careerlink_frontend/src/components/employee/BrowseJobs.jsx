@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container, Typography, Box, Grid, Card, CardContent,
-  Chip, CircularProgress, Alert, Button, TextField, Paper
+  Container, Typography, Box, Grid, Card, CardContent, Chip,
+  CircularProgress, Alert, Button, TextField, Paper, List, ListItemButton, ListItemText
 } from '@mui/material';
 import { useAuthUser } from '../../auth/authContext';
 import axios from 'axios';
@@ -20,28 +20,20 @@ const BrowseJobs = () => {
   const [error, setError] = useState(null);
   const [jobs, setJobs] = useState([]);
   const [applications, setApplications] = useState([]);
-  const [filters, setFilters] = useState({
-    title: '',
-    location: '',
-    minSalary: ''
-  });
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [filters, setFilters] = useState({ title: '', location: '', minSalary: '' });
 
   const fetchJobs = async () => {
     try {
       setLoading(true);
       setError(null);
-
       const params = {};
       if (filters.title.trim()) params.title = filters.title;
       if (filters.location.trim()) params.location = filters.location;
       if (filters.minSalary.trim()) params.minSalary = filters.minSalary;
-
-      const jobsRes = await axios.get(`${API_BASE_URL}/api/jobs`, {
-        params,
-        withCredentials: true
-      });
-
+      const jobsRes = await axios.get(`${API_BASE_URL}/api/jobs`, { params, withCredentials: true });
       setJobs(jobsRes.data);
+      setSelectedJob(jobsRes.data[0] || null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to fetch jobs');
     } finally {
@@ -51,9 +43,7 @@ const BrowseJobs = () => {
 
   const fetchApplications = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/applications/${user.id}`, {
-        withCredentials: true
-      });
+      const res = await axios.get(`${API_BASE_URL}/api/applications/${user.id}`, { withCredentials: true });
       setApplications(res.data);
     } catch (err) {
       console.error('Failed to fetch applications:', err);
@@ -70,16 +60,10 @@ const BrowseJobs = () => {
       const response = await axios.post(
         `${API_BASE_URL}/api/applications`,
         { jobId: Number(jobId), userId: Number(user.id) },
-        {
-          withCredentials: true,
-          headers: { 'Content-Type': 'application/json' }
-        }
+        { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
       );
-
       setApplications(prev => [...prev, response.data]);
-      setJobs(prev => prev.map(job =>
-        job.id === jobId ? { ...job, hasApplied: true } : job
-      ));
+      setJobs(prev => prev.map(job => job.id === jobId ? { ...job, hasApplied: true } : job));
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to apply for job');
     }
@@ -96,137 +80,68 @@ const BrowseJobs = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Browse Jobs
-      </Typography>
-
-      <Paper component="form" onSubmit={handleFilterSubmit} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" gutterBottom>
-          <FilterIcon sx={{ verticalAlign: 'middle', mr: 1 }} />
-          Filter Jobs
-        </Typography>
+    <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Typography variant="h4" gutterBottom>Browse Jobs</Typography>
+      <Paper component="form" onSubmit={handleFilterSubmit} sx={{ p: 3, mb: 3 }}>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Job Title"
-              name="title"
-              value={filters.title}
-              onChange={handleFilterChange}
-              InputProps={{
-                startAdornment: <SearchIcon sx={{ mr: 1, color: 'action.active' }} />
-              }}
-            />
+            <TextField fullWidth label="Job Title" name="title" value={filters.title} onChange={handleFilterChange} InputProps={{ startAdornment: <SearchIcon sx={{ mr: 1 }} /> }} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              label="Location"
-              name="location"
-              value={filters.location}
-              onChange={handleFilterChange}
-            />
+            <TextField fullWidth label="Location" name="location" value={filters.location} onChange={handleFilterChange} />
           </Grid>
           <Grid item xs={12} md={2}>
-            <TextField
-              fullWidth
-              label="Min Salary ($)"
-              name="minSalary"
-              type="number"
-              value={filters.minSalary}
-              onChange={handleFilterChange}
-            />
+            <TextField fullWidth label="Min Salary ($)" name="minSalary" type="number" value={filters.minSalary} onChange={handleFilterChange} />
           </Grid>
           <Grid item xs={12} md={2}>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{ height: '100%' }}
-            >
-              Apply Filters
-            </Button>
+            <Button type="submit" variant="contained" fullWidth sx={{ height: '100%' }}>Apply</Button>
           </Grid>
         </Grid>
       </Paper>
 
       {loading ? (
-        <Container sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress />
-        </Container>
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress /></Box>
       ) : error ? (
-        <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>
-      ) : jobs.length === 0 ? (
-        <Typography variant="body1" textAlign="center" color="text.secondary">
-          No jobs found matching your criteria
-        </Typography>
+        <Alert severity="error">{error}</Alert>
       ) : (
-        <Grid container spacing={3}>
-          {jobs.map(job => (
-            <Grid item xs={12} key={job.id}>
-              <Card elevation={3}>
-                <CardContent>
-                  <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: 2
-                  }}>
-                    <Box>
-                      <Typography variant="h6" gutterBottom>{job.title}</Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <BusinessIcon fontSize="small" sx={{ mr: 1 }} />
-                        <Typography>{job.company.name} • {job.location}</Typography>
-                      </Box>
-                      <Typography variant="body2" sx={{ mb: 1 }}>
-                        <strong>Posted by:</strong> {job.employer.username}
-                      </Typography>
-                      {job.description && (
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          {job.description}
-                        </Typography>
-                      )}
-                      {job.salary && (
-                        <Typography variant="body1" sx={{ mb: 1 }}>
-                          <strong>Salary:</strong> ${job.salary.toLocaleString()} per year
-                        </Typography>
-                      )}
-                      {job.requirements && (
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                          <strong>Requirements:</strong> {job.requirements}
-                        </Typography>
-                      )}
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DateIcon fontSize="small" sx={{ mr: 1 }} />
-                        <Typography variant="body2" color="text.secondary">
-                          Posted: {new Date(job.createdAt).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: { xs: 'flex-start', sm: 'flex-end' }
-                    }}>
-                      {applications.some(app => app.jobId === job.id) ? (
-                        <Chip label="Applied" color="success" sx={{ minWidth: 100 }} />
-                      ) : (
-                        <Button
-                          variant="contained"
-                          onClick={() => handleApply(job.id)}
-                          sx={{ minWidth: 100 }}
-                        >
-                          Apply
-                        </Button>
-                      )}
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Box sx={{ display: 'flex', height: '70vh', gap: 2 }}>
+          {/* Left List */}
+          <Paper sx={{ width: '50%', overflowY: 'auto' }}>
+            <List>
+              {jobs.map(job => (
+                <ListItemButton key={job.id} selected={selectedJob?.id === job.id} onClick={() => setSelectedJob(job)}>
+                  <ListItemText primary={job.title} secondary={`${job.company.name} • ${job.location}`} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Paper>
+
+          {/* Right Detail */}
+          <Paper sx={{ width: '50%', overflowY: 'auto', p: 3 }}>
+            {selectedJob ? (
+              <>
+                <Typography variant="h5" gutterBottom>{selectedJob.title}</Typography>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                  <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                  {selectedJob.company.name} • {selectedJob.location}
+                </Typography>
+                <Typography variant="body2" sx={{ mb: 1 }}><strong>Posted by:</strong> {selectedJob.employer.username}</Typography>
+                {selectedJob.description && <Typography sx={{ mb: 2 }}>{selectedJob.description}</Typography>}
+                {selectedJob.salary && <Typography sx={{ mb: 1 }}><strong>Salary:</strong> ${selectedJob.salary.toLocaleString()} per year</Typography>}
+                {selectedJob.requirements && <Typography sx={{ mb: 2 }}><strong>Requirements:</strong> {selectedJob.requirements}</Typography>}
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                  <DateIcon sx={{ mr: 1, fontSize: 'small' }} />
+                  Posted: {new Date(selectedJob.createdAt).toLocaleDateString()}
+                </Typography>
+                {applications.some(app => app.jobId === selectedJob.id) ? (
+                  <Chip label="Applied" color="success" />
+                ) : (
+                  <Button variant="contained" onClick={() => handleApply(selectedJob.id)}>Apply</Button>
+                )}
+              </>
+            ) : <Typography>Select a job to view details</Typography>}
+          </Paper>
+        </Box>
       )}
     </Container>
   );
