@@ -184,7 +184,19 @@ const [dialogOpen, setDialogOpen] = useState(false);
         
       )}
       {isMobile && selectedJob && (
-  <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullScreen>
+  <Dialog
+  open={dialogOpen}
+  onClose={() => setDialogOpen(false)}
+  fullWidth
+  maxWidth="sm"
+  scroll="paper"
+  PaperProps={{
+    sx: {
+      mt: '64px', 
+      borderRadius: 2,
+    }
+  }}
+>
     <DialogTitle>
       {selectedJob.title}
       <IconButton
