@@ -9,7 +9,8 @@ import EmployerDashboard from "./components/employer/Dashboard.jsx";
 import NavBar from "./components/navbar/NavBar.jsx"
 import Companies from "./components/Companies.jsx";
 import { Box } from "@mui/material";
-import EmployeeDashboard from "./components/employee/Dashboard.jsx";
+import BrowseJobs from "./components/employee/BrowseJobs.jsx";
+import MyApplications from "./components/employee/MyApplications.jsx";
 
 function App() {
 
@@ -46,14 +47,22 @@ function App() {
               </RequireAuth>
             }
           />
-          <Route
-            path="/employee/dashboard"
-            element={
-              <RequireAuth roles={["JOB_SEEKER"]}>
-                <EmployeeDashboard />
-              </RequireAuth>
-            }
-          />
+         <Route
+  path="/employee/dashboard/jobs"
+  element={
+    <RequireAuth roles={["JOB_SEEKER"]}>
+      <BrowseJobs />
+    </RequireAuth>
+  }
+/>
+<Route
+  path="/employee/dashboard/applications"
+  element={
+    <RequireAuth roles={["JOB_SEEKER"]}>
+      <MyApplications />
+    </RequireAuth>
+  }
+/>
         </Routes>
       </Box>
     </>
