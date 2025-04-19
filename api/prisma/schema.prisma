@@ -67,6 +67,7 @@ model Job {
   salary       Int?
   requirements String @db.Text
   postedBy     Int
+  isDeleted    Boolean  @default(false)
 
   company  Company @relation(fields: [companyId], references: [id])
   employer User    @relation(fields: [postedBy], references: [id], name: "PostedJobs")

@@ -82,11 +82,6 @@ const NavBar = () => {
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
-  // Get dashboard path based on user role
-  const getDashboardPath = () => {
-    return hasRole('EMPLOYER') ? '/employer/dashboard' : '/employee/dashboard';
-  };
-
   // Handle scroll effect
   React.useEffect(() => {
     const handleScroll = () => {

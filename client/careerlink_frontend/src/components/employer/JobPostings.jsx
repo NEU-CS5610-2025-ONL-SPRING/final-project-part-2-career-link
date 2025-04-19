@@ -173,6 +173,7 @@ const JobPostings = () => {
                         </TableHead>
                         <TableBody>
                             {jobPostings.map((job) => (
+                                !job.isDeleted && ( 
                                 <TableRow key={job.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                                     <TableCell>{job.title}</TableCell>
                                     <TableCell>{job.location}</TableCell>
@@ -218,7 +219,7 @@ const JobPostings = () => {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            )))}
                         </TableBody>
                     </Table>
                 </TableContainer>
