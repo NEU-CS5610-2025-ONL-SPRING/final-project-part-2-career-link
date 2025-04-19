@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from "@mui/material";
 import { fetchGetWithAuth, fetchPostWithAuth, fetchDeleteWithAuth, fetchPutWithAuth } from "../../auth/fetchWithAuth"; // Assuming you have a fetch utility
 
 const JobPostings = () => {
@@ -15,6 +15,12 @@ const JobPostings = () => {
         requirements: ""
     });
     const [editJob, setEditJob] = useState(null); // For editing job posts
+    const [errorMessages, setErrorMessages] = useState({
+        title: "",
+        description: "",
+        location: "",
+        salary: ""
+    });
 
     // Fetch job postings when component mounts
     useEffect(() => {
@@ -33,23 +39,50 @@ const JobPostings = () => {
         fetchJobPostings();
     }, []);
 
+    // Form Validation
+    const validateForm = () => {
+        let isValid = true;
+        const errors = { title: "", description: "", location: "", salary: "" };
+
+        if (!newJob.title) {
+            errors.title = "Title is required.";
+            isValid = false;
+        }
+        if (!newJob.description) {
+            errors.description = "Description is required.";
+            isValid = false;
+        }
+        if (!newJob.location) {
+            errors.location = "Location is required.";
+            isValid = false;
+        }
+        if (newJob.salary && isNaN(newJob.salary)) {
+            errors.salary = "Salary must be a number.";
+            isValid = false;
+        }
+
+        setErrorMessages(errors);
+        return isValid;
+    };
+
     // Handle creating a new job posting
     const handleCreateJob = async () => {
-        try {
-            if (!newJob.title || !newJob.description || !newJob.location) {
-                throw new Error("Title, description, and location are required.");
-            }
+        if (!validateForm()) return;
 
+        try {
             const response = await fetchPostWithAuth(`${process.env.REACT_APP_API_URL}/api/jobs`, newJob);
-            if (response) {
-                setJobPostings([...jobPostings, response]);
-                setOpenDialog(false); // Close the dialog
-                setNewJob({ title: "", description: "", location: "", salary: "", requirements: "" }); // Reset the form
+            const jobData = await response.json();
+
+            if (jobData) {
+                setJobPostings(prevPostings => [...prevPostings, jobData]);
+                setOpenDialog(false);
+                setNewJob({ title: "", description: "", location: "", salary: "", requirements: "" });  // Clear form
             }
         } catch (err) {
             setError(err.message || "Failed to create job.");
         }
     };
+
 
     // Handle editing an existing job posting
     const handleEditJob = (job) => {
@@ -66,44 +99,33 @@ const JobPostings = () => {
 
     // Handle updating the job posting
     const handleUpdateJob = async () => {
-        try {
-            if (!newJob.title || !newJob.description || !newJob.location) {
-                throw new Error("Title, description, and location are required.");
-            }
+        if (!validateForm()) return;
 
-            // Wait for the PUT request to complete
-            const response = await fetchPutWithAuth(`${process.env.REACT_APP_API_URL}/api/jobs/${editJob.id}`, newJob); // PUT request for update
+        try {
+            const response = await fetchPutWithAuth(`${process.env.REACT_APP_API_URL}/api/jobs/${editJob.id}`, newJob);
             if (response) {
-                // Update the job in the state after successful update
                 const updatedJobPostings = jobPostings.map((job) =>
                     job.id === editJob.id ? { ...job, ...newJob } : job
                 );
-
-                // Update state to reflect changes in the table
                 setJobPostings(updatedJobPostings);
                 handleDialogClose();
             }
         } catch (err) {
-            console.error("Error updating job:", err);
             setError(err.message || "Failed to update job.");
         }
     };
-
 
     // Handle deleting a job posting
     const handleDeleteJob = async (jobId) => {
         try {
             const response = await fetchDeleteWithAuth(`${process.env.REACT_APP_API_URL}/api/jobs/${jobId}`);
-            const data = await response.json(); // Assuming response is JSON
-            console.log("Delete response:", data);
-
+            const data = await response.json();
             if (data.message === "Job deleted successfully") {
-                setJobPostings(jobPostings.filter((job) => job.id !== jobId)); // Remove deleted job from state
+                setJobPostings(jobPostings.filter((job) => job.id !== jobId));
             } else {
                 setError("Failed to delete job.");
             }
         } catch (err) {
-            console.error("Error during deletion:", err);
             setError("Failed to delete job.");
         }
     };
@@ -115,7 +137,11 @@ const JobPostings = () => {
     };
 
     if (loading) {
-        return <Typography variant="h6" align="center">Loading job postings...</Typography>;
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     if (error) {
@@ -124,16 +150,16 @@ const JobPostings = () => {
 
     return (
         <Box sx={{ p: 3 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
+            <Typography variant="h4" component="h1" gutterBottom sx={{ color: '#3f51b5', fontWeight: 'bold' }}>
                 Job Postings
             </Typography>
 
-            <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)}>
+            <Button variant="contained" color="primary" onClick={() => setOpenDialog(true)} sx={{ mb: 3 }}>
                 Post New Job
             </Button>
 
             {jobPostings.length > 0 ? (
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -146,7 +172,7 @@ const JobPostings = () => {
                         </TableHead>
                         <TableBody>
                             {jobPostings.map((job) => (
-                                <TableRow key={job.id}>
+                                <TableRow key={job.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
                                     <TableCell>{job.title}</TableCell>
                                     <TableCell>{job.location}</TableCell>
                                     <TableCell>{job.salary ? `$${job.salary.toLocaleString()}` : "Not specified"}</TableCell>
@@ -169,14 +195,15 @@ const JobPostings = () => {
                                         <Button
                                             variant="outlined"
                                             color="primary"
-                                            onClick={() => handleEditJob(job)} // Edit job
+                                            onClick={() => handleEditJob(job)}
+                                            sx={{ mr: 1 }}
                                         >
                                             Edit
                                         </Button>
                                         <Button
                                             variant="outlined"
                                             color="error"
-                                            onClick={() => handleDeleteJob(job.id)} // Delete job
+                                            onClick={() => handleDeleteJob(job.id)}
                                         >
                                             Delete
                                         </Button>
@@ -199,47 +226,66 @@ const JobPostings = () => {
                     <TextField
                         label="Job Title"
                         fullWidth
-                        value={newJob.title || ""} // Ensure it's an empty string if the value is null
+                        value={newJob.title || ""}
                         onChange={(e) => setNewJob({ ...newJob, title: e.target.value })}
                         margin="normal"
+                        error={!!errorMessages.title}
+                        helperText={errorMessages.title}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         label="Location"
                         fullWidth
-                        value={newJob.location || ""} // Ensure it's an empty string if the value is null
+                        value={newJob.location || ""}
                         onChange={(e) => setNewJob({ ...newJob, location: e.target.value })}
                         margin="normal"
+                        error={!!errorMessages.location}
+                        helperText={errorMessages.location}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         label="Salary"
                         fullWidth
-                        value={newJob.salary || ""} // Ensure it's an empty string if the value is null
+                        value={newJob.salary || ""}
                         onChange={(e) => setNewJob({ ...newJob, salary: e.target.value })}
                         margin="normal"
                         type="number"
+                        error={!!errorMessages.salary}
+                        helperText={errorMessages.salary}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         label="Job Description"
                         fullWidth
-                        value={newJob.description || ""} // Ensure it's an empty string if the value is null
+                        value={newJob.description || ""}
                         onChange={(e) => setNewJob({ ...newJob, description: e.target.value })}
                         margin="normal"
                         multiline
                         rows={4}
+                        error={!!errorMessages.description}
+                        helperText={errorMessages.description}
+                        sx={{ mb: 2 }}
                     />
                     <TextField
                         label="Requirements"
                         fullWidth
-                        value={newJob.requirements || ""} // Ensure it's an empty string if the value is null
+                        value={newJob.requirements || ""}
                         onChange={(e) => setNewJob({ ...newJob, requirements: e.target.value })}
                         margin="normal"
                         multiline
                         rows={3}
+                        sx={{ mb: 2 }}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose} color="primary">Cancel</Button>
-                    <Button onClick={editJob ? handleUpdateJob : handleCreateJob} color="primary">{editJob ? "Update Job" : "Post Job"}</Button>
+                    <Button
+                        onClick={editJob ? handleUpdateJob : handleCreateJob}
+                        color="primary"
+                        disabled={!newJob.title || !newJob.description || !newJob.location}
+                    >
+                        {editJob ? "Update Job" : "Post Job"}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>
