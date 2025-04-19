@@ -134,6 +134,23 @@ const getUserByToken = async (req, res) => {
   }
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const user = await findUserByUserId(parseInt(req.params.employeeId));
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const userData = generateUserResponse(user);
+
+    res.json(userData);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ error: " Internal Server Error" });
+  }
+};
+
 const generateJWTToken = (payload) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "15m",
@@ -145,4 +162,5 @@ module.exports = {
   signup,
   logout,
   getUserByToken,
+  getUserById
 };

@@ -35,6 +35,7 @@ app.post("/login", authController.login);
 app.post("/register", authController.signup);
 app.post("/logout", authController.logout);
 app.get("/api/users/token", requireAuth, authController.getUserByToken);
+app.get("/api/users/:employeeId", requireEmployer, authController.getUserById);
 
 //Education API's
 app.get(

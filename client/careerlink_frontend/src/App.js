@@ -1,17 +1,20 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { Box } from "@mui/material";
+
 import Home from "./components/home/Home.jsx";
 import Login from "./components/login/Login.jsx";
-import { Routes, Route } from "react-router-dom";
-import { RequireAuth } from "./auth/requireAuthContext.js";
 import Signup from "./components/signup/Signup.jsx";
 import Profile from "./components/profile/Profile.jsx";
 import NavBar from "./components/navbar/NavBar.jsx";
 import Companies from "./components/Companies.jsx";
-import { Box } from "@mui/material";
 import BrowseJobs from "./components/employee/BrowseJobs.jsx";
 import MyApplications from "./components/employee/MyApplications.jsx";
 import JobPostings from "./components/employer/JobPostings.jsx";
 import Applications from "./components/employer/Applications.jsx";
+import CandidateProfileView from "./components/profile/CandidateProfileView.jsx";
+
+import { RequireAuth } from "./auth/requireAuthContext.js";
 
 function App() {
   return (
@@ -26,11 +29,14 @@ function App() {
         }}
       >
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/logout" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/companies" element={<Companies />} />
+
+          {/* Protected Profile Route (All Roles) */}
           <Route
             path="/profile"
             element={
@@ -39,6 +45,8 @@ function App() {
               </RequireAuth>
             }
           />
+
+          {/* JOB_SEEKER Routes */}
           <Route
             path="/employee/jobs"
             element={
@@ -55,6 +63,8 @@ function App() {
               </RequireAuth>
             }
           />
+
+          {/* EMPLOYER Routes */}
           <Route
             path="/employer/jobs"
             element={
@@ -68,6 +78,14 @@ function App() {
             element={
               <RequireAuth roles={["EMPLOYER"]}>
                 <Applications />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/candidates/:userId"
+            element={
+              <RequireAuth roles={["EMPLOYER"]}>
+                <CandidateProfileView />
               </RequireAuth>
             }
           />

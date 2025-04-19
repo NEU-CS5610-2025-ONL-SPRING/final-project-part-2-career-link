@@ -13,12 +13,9 @@ const {
 
 const getExperience = async (req, res) => {
   try {
-    const { userId } = req.params;
-    if (parseInt(userId) !== req.userId) {
-      return res.status(401).json({ error: "Request Unauthorized" });
-    }
+    const userId = parseInt(req.params.userId);
 
-    const user = await findExperienceByUserId(req.userId);
+    const user = await findExperienceByUserId(userId);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
