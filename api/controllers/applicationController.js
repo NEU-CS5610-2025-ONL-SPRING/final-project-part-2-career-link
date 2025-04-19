@@ -1,85 +1,67 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-// Get applications for employer's jobs
-const getEmployerApplications = async (req, res) => {
+// Get applications for a specific employer's job
+const getEmployerApplicationsForJob = async (req, res) => {
+  const { jobId } = req.query;
+  if (!jobId) {
+    return res.status(400).json({ error: "Job ID is required" });
+  }
+
   try {
-    const jobs = await prisma.job.findMany({
-      where: { postedBy: req.user.userId },
-      select: { id: true }
-    });
-
-    const jobIds = jobs.map(job => job.id);
-
+    // Get the applications for the specific job
     const applications = await prisma.application.findMany({
-      where: { jobId: { in: jobIds } },
+      where: { jobId: parseInt(jobId) },
       include: {
         job: {
           select: {
-            title: true
-          }
+            title: true,
+          },
         },
         user: {
           select: {
             username: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     });
 
-    const formattedApplications = applications.map(app => ({
+    const formattedApplications = applications.map((app) => ({
       id: app.id,
       jobId: app.jobId,
       jobTitle: app.job.title,
       applicantId: app.userId,
       applicantName: app.user.username,
       status: app.status,
-      createdAt: app.createdAt
+      createdAt: app.appliedAt
+        ? new Date(app.appliedAt).toLocaleDateString()
+        : "Invalid Date",
     }));
 
     res.json(formattedApplications);
   } catch (error) {
-    console.error('Error fetching applications:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching applications for the job:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 // Update application status
 const updateApplicationStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body; 
+
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    // Verify the application belongs to one of the employer's jobs
-    const application = await prisma.application.findUnique({
+    const application = await prisma.application.update({
       where: { id: parseInt(id) },
-      include: {
-        job: true
-      }
+      data: { status },
     });
-
-    if (!application) {
-      return res.status(404).json({ error: 'Application not found' });
-    }
-
-    // Check if the job belongs to the current employer
-    if (application.job.postedById !== req.user.userId) {
-      return res.status(403).json({ error: 'Not authorized to update this application' });
-    }
-
-    // Update the status
-    const updatedApplication = await prisma.application.update({
-      where: { id: parseInt(id) },
-      data: { status }
-    });
-
-    res.json(updatedApplication);
+    res.json(application);
   } catch (error) {
-    console.error('Error updating application status:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Failed to update application status' });
   }
 };
+
 
 const getUserApplications = async (req, res) => {
   try {
@@ -91,21 +73,21 @@ const getUserApplications = async (req, res) => {
             company: {
               select: {
                 name: true,
-                location: true
-              }
-            }
-          }
-        }
+                location: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
-        appliedAt: 'desc'
-      }
+        appliedAt: "desc",
+      },
     });
 
     res.json(applications);
   } catch (error) {
-    console.error('Error fetching user applications:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching user applications:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -116,19 +98,21 @@ const createApplication = async (req, res) => {
 
     // Verify user is applying for themselves
     if (parseInt(userId) !== req.user.userId) {
-      return res.status(403).json({ error: 'Not authorized to apply for this user' });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to apply for this user" });
     }
 
     // Check if application already exists
     const existingApp = await prisma.application.findFirst({
-      where: { 
+      where: {
         jobId: parseInt(jobId),
-        userId: parseInt(userId)
-      }
+        userId: parseInt(userId),
+      },
     });
 
     if (existingApp) {
-      return res.status(400).json({ error: 'Already applied to this job' });
+      return res.status(400).json({ error: "Already applied to this job" });
     }
 
     // Create new application
@@ -136,26 +120,26 @@ const createApplication = async (req, res) => {
       data: {
         jobId: parseInt(jobId),
         userId: parseInt(userId),
-        status: 'APPLIED'
+        status: "APPLIED",
       },
       include: {
         job: {
           include: {
-            company: true
-          }
-        }
-      }
+            company: true,
+          },
+        },
+      },
     });
 
     res.status(201).json(application);
   } catch (error) {
-    console.error('Error creating application:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error("Error creating application:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 module.exports = {
-  getEmployerApplications,
+  getEmployerApplicationsForJob,
   updateApplicationStatus,
   getUserApplications,
   createApplication,
