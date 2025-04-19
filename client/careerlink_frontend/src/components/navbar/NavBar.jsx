@@ -148,7 +148,6 @@ const NavBar = () => {
               {isAuthenticated && hasRole('EMPLOYER') && (
                 <>
                   <NavButton component={Link} to="/employer/jobs">Job Postings</NavButton>
-                  <NavButton component={Link} to="/employer/applications">Applications</NavButton>
                 </>
               )}
               {isAuthenticated && hasRole('JOB_SEEKER') && (

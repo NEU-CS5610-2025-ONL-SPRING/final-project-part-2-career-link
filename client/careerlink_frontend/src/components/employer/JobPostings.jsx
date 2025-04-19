@@ -158,8 +158,9 @@ const JobPostings = () => {
                 Post New Job
             </Button>
 
+
             {jobPostings.length > 0 ? (
-                <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+                <TableContainer component={Paper}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -190,6 +191,14 @@ const JobPostings = () => {
                                         }}>
                                             {job.applications?.length || 0}
                                         </Box>
+                                        <Button
+                                            variant="text"
+                                            color="primary"
+                                            onClick={() => window.open(`/employer/applications?jobId=${job.id}`, '_blank')} // Open applications in a new tab
+                                            sx={{ ml: 2, textTransform: 'none', fontSize: '14px' }}
+                                        >
+                                            View Applications
+                                        </Button>
                                     </TableCell>
                                     <TableCell>
                                         <Button
@@ -218,7 +227,6 @@ const JobPostings = () => {
                     No job postings available.
                 </Typography>
             )}
-
             {/* Post New Job Dialog */}
             <Dialog open={openDialog} onClose={handleDialogClose}>
                 <DialogTitle>{editJob ? "Edit Job Posting" : "Post New Job"}</DialogTitle>
