@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom"; // Import to use location hook
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
-import { fetchGetWithAuth } from "../../auth/fetchWithAuth"; // Assuming you have a fetch utility
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Select, MenuItem, FormControl, InputLabel, Button } from "@mui/material";
+import { fetchGetWithAuth, fetchPutWithAuth } from "../../auth/fetchWithAuth"; // Assuming you have a fetch utility
 
 const Applications = () => {
     const [applications, setApplications] = useState([]);
@@ -35,6 +35,25 @@ const Applications = () => {
 
         fetchApplications();
     }, [jobId]); // Only re-run if jobId changes
+
+    // Function to handle status update
+    const handleStatusChange = async (applicationId, newStatus) => {
+        try {
+            const updatedApplication = await fetchPutWithAuth(
+                `${process.env.REACT_APP_API_URL}/api/applications/${applicationId}/status`,
+                { status: newStatus }
+            );
+            setApplications((prevApplications) =>
+                prevApplications.map((application) =>
+                    application.id === applicationId
+                        ? { ...application, status: newStatus }
+                        : application
+                )
+            );
+        } catch (err) {
+            setError("Failed to update application status.");
+        }
+    };
 
     // Loading state
     if (loading) {
@@ -70,6 +89,7 @@ const Applications = () => {
                                 <TableCell>Job Title</TableCell>
                                 <TableCell>Applied On</TableCell>
                                 <TableCell>Status</TableCell>
+                                <TableCell>Update Status</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -79,6 +99,18 @@ const Applications = () => {
                                     <TableCell>{application.jobTitle || "Unknown Job"}</TableCell>
                                     <TableCell>{application.createdAt}</TableCell>
                                     <TableCell>{application.status}</TableCell>
+                                    <TableCell>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                value={application.status}
+                                                onChange={(e) => handleStatusChange(application.id, e.target.value)}
+                                            >
+                                                <MenuItem value="UNDER_REVIEW">Under Review</MenuItem>
+                                                <MenuItem value="ACCEPTED">Accepted</MenuItem>
+                                                <MenuItem value="REJECTED">Rejected</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
