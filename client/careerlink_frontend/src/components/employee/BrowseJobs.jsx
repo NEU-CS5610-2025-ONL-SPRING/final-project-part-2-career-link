@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 import {
   Container, Typography, Box, Grid, Card, CardContent, Chip,
   CircularProgress, Alert, Button, TextField, Paper, List, ListItemButton, ListItemText
@@ -15,6 +20,10 @@ import {
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const BrowseJobs = () => {
+    const theme = useTheme();
+const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+const [dialogOpen, setDialogOpen] = useState(false);
+
   const { user } = useAuthUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -104,12 +113,26 @@ const BrowseJobs = () => {
       ) : error ? (
         <Alert severity="error">{error}</Alert>
       ) : (
-        <Box sx={{ display: 'flex', height: '70vh', gap: 2 }}>
+        <Box sx={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            height: isMobile ? 'auto' : '70vh',
+            gap: 2
+          }}>
+          
           {/* Left List */}
-          <Paper sx={{ width: '50%', overflowY: 'auto' }}>
+          <Paper sx={{
+  width: isMobile ? '100%' : '50%',
+  overflowY: 'auto',
+  p: isMobile ? 2 : 3
+}}>
             <List>
               {jobs.map(job => (
-                <ListItemButton key={job.id} selected={selectedJob?.id === job.id} onClick={() => setSelectedJob(job)}>
+                <ListItemButton key={job.id} selected={selectedJob?.id === job.id} onClick={() => {
+                    setSelectedJob(job);
+                    if (isMobile) setDialogOpen(true);
+                  }}
+                  >
                   <ListItemText primary={job.title} secondary={`${job.company.name} • ${job.location}`} />
                 </ListItemButton>
               ))}
@@ -117,32 +140,118 @@ const BrowseJobs = () => {
           </Paper>
 
           {/* Right Detail */}
-          <Paper sx={{ width: '50%', overflowY: 'auto', p: 3 }}>
-            {selectedJob ? (
-              <>
-                <Typography variant="h5" gutterBottom>{selectedJob.title}</Typography>
-                <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                  <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-                  {selectedJob.company.name} • {selectedJob.location}
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 1 }}><strong>Posted by:</strong> {selectedJob.employer.username}</Typography>
-                {selectedJob.description && <Typography sx={{ mb: 2 }}>{selectedJob.description}</Typography>}
-                {selectedJob.salary && <Typography sx={{ mb: 1 }}><strong>Salary:</strong> ${selectedJob.salary.toLocaleString()} per year</Typography>}
-                {selectedJob.requirements && <Typography sx={{ mb: 2 }}><strong>Requirements:</strong> {selectedJob.requirements}</Typography>}
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  <DateIcon sx={{ mr: 1, fontSize: 'small' }} />
-                  Posted: {new Date(selectedJob.createdAt).toLocaleDateString()}
-                </Typography>
-                {applications.some(app => app.jobId === selectedJob.id) ? (
-                  <Chip label="Applied" color="success" />
-                ) : (
-                  <Button variant="contained" onClick={() => handleApply(selectedJob.id)}>Apply</Button>
-                )}
-              </>
-            ) : <Typography>Select a job to view details</Typography>}
-          </Paper>
+          {!isMobile && (
+  <Paper sx={{ width: '50%', overflowY: 'auto', p: 3 }}>
+    {selectedJob ? (
+      <>
+        <Typography variant="h5" gutterBottom>{selectedJob.title}</Typography>
+        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+          <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+          {selectedJob.company.name} • {selectedJob.location}
+        </Typography>
+        <Typography variant="body2" sx={{ mb: 1 }}>
+          <strong>Posted by:</strong> {selectedJob.employer.username}
+        </Typography>
+        {selectedJob.description && (
+          <Typography sx={{ mb: 2 }}>{selectedJob.description}</Typography>
+        )}
+        {selectedJob.salary && (
+          <Typography sx={{ mb: 1 }}>
+            <strong>Salary:</strong> ${selectedJob.salary.toLocaleString()} per year
+          </Typography>
+        )}
+        {selectedJob.requirements && (
+          <Typography sx={{ mb: 2 }}>
+            <strong>Requirements:</strong> {selectedJob.requirements}
+          </Typography>
+        )}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <DateIcon sx={{ mr: 1, fontSize: 'small' }} />
+          Posted: {new Date(selectedJob.createdAt).toLocaleDateString()}
+        </Typography>
+        {applications.some(app => app.jobId === selectedJob.id) ? (
+          <Chip label="Applied" color="success" />
+        ) : (
+          <Button variant="contained" onClick={() => handleApply(selectedJob.id)}>Apply</Button>
+        )}
+      </>
+    ) : (
+      <Typography>Select a job to view details</Typography>
+    )}
+  </Paper>
+)}
         </Box>
+        
       )}
+      {isMobile && selectedJob && (
+  <Dialog
+  open={dialogOpen}
+  onClose={() => setDialogOpen(false)}
+  fullWidth
+  maxWidth="sm"
+  scroll="paper"
+  PaperProps={{
+    sx: {
+      mt: '64px', 
+      borderRadius: 2,
+    }
+  }}
+>
+    <DialogTitle>
+      {selectedJob.title}
+      <IconButton
+        edge="end"
+        color="inherit"
+        onClick={() => setDialogOpen(false)}
+        aria-label="close"
+        sx={{ position: 'absolute', right: 8, top: 8 }}
+      >
+        <CloseIcon />
+      </IconButton>
+    </DialogTitle>
+    <DialogContent>
+  <Typography variant="subtitle1" sx={{ mb: 1 }}>
+    <BusinessIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+    {selectedJob.company.name} • {selectedJob.location}
+  </Typography>
+
+  <Typography variant="body2" sx={{ mb: 1 }}>
+    <strong>Posted by:</strong> {selectedJob.employer.username}
+  </Typography>
+
+  {selectedJob.description && (
+    <Typography sx={{ mb: 2 }}>{selectedJob.description}</Typography>
+  )}
+
+  {selectedJob.salary && (
+    <Typography sx={{ mb: 1 }}>
+      <strong>Salary:</strong> ${selectedJob.salary.toLocaleString()} per year
+    </Typography>
+  )}
+
+  {selectedJob.requirements && (
+    <Typography sx={{ mb: 2 }}>
+      <strong>Requirements:</strong> {selectedJob.requirements}
+    </Typography>
+  )}
+
+  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+    <DateIcon sx={{ mr: 1, fontSize: 'small' }} />
+    Posted: {new Date(selectedJob.createdAt).toLocaleDateString()}
+  </Typography>
+
+  {applications.some(app => app.jobId === selectedJob.id) ? (
+    <Chip label="Applied" color="success" />
+  ) : (
+    <Button variant="contained" onClick={() => handleApply(selectedJob.id)}>
+      Apply
+    </Button>
+  )}
+</DialogContent>
+
+  </Dialog>
+)}
+
     </Container>
   );
 };
