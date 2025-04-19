@@ -94,7 +94,9 @@ app.get("/api/companies", companiesController.getAllCompanies);
 
 // Job API's - Add these lines
 app.get("/api/jobs", requireAuth, jobController.getJobs);
-app.post("/api/jobs", requireAuth, jobController.createJob);
+app.post("/api/jobs", requireEmployer, jobController.createJob);
+app.put("/api/jobs/:id", requireEmployer, jobController.updateJob);
+app.delete("/api/jobs/:id",requireEmployer, jobController.deleteJob);
 
 // Application API's
 app.get(
