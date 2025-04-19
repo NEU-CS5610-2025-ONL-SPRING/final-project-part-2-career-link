@@ -5,15 +5,15 @@ import { Routes, Route } from "react-router-dom";
 import { RequireAuth } from "./auth/requireAuthContext.js";
 import Signup from "./components/signup/Signup.jsx";
 import Profile from "./components/profile/Profile.jsx";
-import EmployerDashboard from "./components/employer/Dashboard.jsx";
-import NavBar from "./components/navbar/NavBar.jsx"
+import NavBar from "./components/navbar/NavBar.jsx";
 import Companies from "./components/Companies.jsx";
 import { Box } from "@mui/material";
 import BrowseJobs from "./components/employee/BrowseJobs.jsx";
 import MyApplications from "./components/employee/MyApplications.jsx";
+import JobPostings from "./components/employer/JobPostings.jsx";
+import Applications from "./components/employer/Applications.jsx";
 
 function App() {
-
   return (
     <>
       <NavBar />
@@ -40,29 +40,37 @@ function App() {
             }
           />
           <Route
-            path="/employer/dashboard"
+            path="/employee/jobs"
             element={
-              <RequireAuth roles={["EMPLOYER"]}>
-                <EmployerDashboard />
+              <RequireAuth roles={["JOB_SEEKER"]}>
+                <BrowseJobs />
               </RequireAuth>
             }
           />
-         <Route
-  path="/employee/dashboard/jobs"
-  element={
-    <RequireAuth roles={["JOB_SEEKER"]}>
-      <BrowseJobs />
-    </RequireAuth>
-  }
-/>
-<Route
-  path="/employee/dashboard/applications"
-  element={
-    <RequireAuth roles={["JOB_SEEKER"]}>
-      <MyApplications />
-    </RequireAuth>
-  }
-/>
+          <Route
+            path="/employee/applications"
+            element={
+              <RequireAuth roles={["JOB_SEEKER"]}>
+                <MyApplications />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/employer/jobs"
+            element={
+              <RequireAuth roles={["EMPLOYER"]}>
+                <JobPostings />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/employer/applications"
+            element={
+              <RequireAuth roles={["EMPLOYER"]}>
+                <Applications />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </Box>
     </>

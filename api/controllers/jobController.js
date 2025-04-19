@@ -1,9 +1,11 @@
-const { PrismaClient, $Enums } = require('@prisma/client');
+const { PrismaClient, $Enums } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const getJobs = async (req, res) => {
   try {
-    let where = {};
+    let where = {
+      isDeleted: false,
+    };
     let include = {
       company: {
         select: {
@@ -47,26 +49,33 @@ const getJobs = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const createJob = async (req, res) => {
   try {
     const { title, description, location, salary, requirements } = req.body;
 
     if (!title || !description || !location) {
-      return res.status(400).json({ error: 'Title, description, and location are required' });
+      return res
+        .status(400)
+        .json({ error: "Title, description, and location are required" });
     }
 
     if (salary && isNaN(Number(salary))) {
-      return res.status(400).json({ error: 'Salary must be a number' });
+      return res.status(400).json({ error: "Salary must be a number" });
     }
 
     const employer = await prisma.user.findUnique({
       where: { id: req.user.userId },
-      select: { companyId: true, role: true }
+      select: { companyId: true, role: true },
     });
 
-    if (!employer || employer.role !== $Enums.Role.EMPLOYER || !employer.companyId) {
-      return res.status(403).json({ 
-        error: 'Only employers associated with a company can post jobs' 
+    if (
+      !employer ||
+      employer.role !== $Enums.Role.EMPLOYER ||
+      !employer.companyId
+    ) {
+      return res.status(403).json({
+        error: "Only employers associated with a company can post jobs",
       });
     }
 
@@ -77,35 +86,101 @@ const createJob = async (req, res) => {
         location,
         salary: salary ? Number(salary) : null,
         requirements,
-        postedBy: req.user.userId, 
-        companyId: employer.companyId  
+        postedBy: req.user.userId,
+        companyId: employer.companyId,
       },
       include: {
         employer: {
           select: {
             username: true,
-            email: true
-          }
+            email: true,
+          },
         },
         company: {
           select: {
-            name: true
-          }
-        }
-      }
+            name: true,
+          },
+        },
+      },
     });
 
     res.status(201).json(newJob);
   } catch (error) {
-    console.error('Job creation error:', error);
-    res.status(500).json({ 
-      error: 'Failed to create job',
-      details: error.message 
+    console.error("Job creation error:", error);
+    res.status(500).json({
+      error: "Failed to create job",
+      details: error.message,
     });
+  }
+};
+
+const deleteJob = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Ensure the job exists
+    const job = await prisma.job.findUnique({ where: { id: parseInt(id) } });
+
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    // Soft delete the job (set isDeleted to true)
+    await prisma.job.update({
+      where: { id: parseInt(id) },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    // Return a success message
+    res.status(200).json({ message: "Job deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    res
+      .status(500)
+      .json({ error: "Internal server error", details: error.message });
+  }
+};
+
+const updateJob = async (req, res) => {
+  const { id } = req.params; // Job ID from URL
+  let { title, description, location, salary, requirements } = req.body; // Data from request body
+
+  try {
+    // Ensure salary is a number, if provided
+    if (salary) {
+      salary = parseInt(salary, 10); // Convert salary to integer
+      if (isNaN(salary)) {
+        return res.status(400).json({ error: "Salary must be a valid number" });
+      }
+    }
+
+    // Check if the job exists
+    const job = await prisma.job.findUnique({
+      where: { id: parseInt(id) }, // Ensure the job is found by ID
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" }); // Return 404 if job doesn't exist
+    }
+
+    // Proceed to update the job
+    const updatedJob = await prisma.job.update({
+      where: { id: parseInt(id) },
+      data: { title, description, location, salary, requirements },
+    });
+
+    res.status(200).json(updatedJob); // Return the updated job
+  } catch (error) {
+    console.error("Error updating job:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 module.exports = {
   getJobs,
-  createJob
+  createJob,
+  deleteJob,
+  updateJob,
 };

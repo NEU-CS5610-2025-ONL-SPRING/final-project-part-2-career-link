@@ -94,14 +94,17 @@ app.get("/api/companies", companiesController.getAllCompanies);
 
 // Job API's - Add these lines
 app.get("/api/jobs", requireAuth, jobController.getJobs);
-app.post("/api/jobs", requireAuth, jobController.createJob);
+app.post("/api/jobs", requireEmployer, jobController.createJob);
+app.put("/api/jobs/:id", requireEmployer, jobController.updateJob);
+app.delete("/api/jobs/:id", requireEmployer, jobController.deleteJob);
 
 // Application API's
 app.get(
-  "/api/applications/employer",
+  "/api/applications/employer/job",
   requireEmployer,
-  applicationController.getEmployerApplications
+  applicationController.getEmployerApplicationsForJob
 );
+
 app.put(
   "/api/applications/:id/status",
   requireEmployer,
@@ -136,10 +139,13 @@ app.post(
   resumeController.uploadResume
 );
 
-app.get("/api/resume/:userId", requireAuth, resumeController.getResumeUrl); 
+app.get("/api/resume/:userId", requireAuth, resumeController.getResumeUrl);
 
-app.get("/api/resume/analyze/:userId", requireAuth, resumeController.analyzeResume);
-
+app.get(
+  "/api/resume/analyze/:userId",
+  requireAuth,
+  resumeController.analyzeResume
+);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

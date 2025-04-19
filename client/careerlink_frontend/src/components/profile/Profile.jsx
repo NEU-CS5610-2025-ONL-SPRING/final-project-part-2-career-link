@@ -3,6 +3,8 @@ import Education from "../education/Education";
 import Experience from "../experience/Experience";
 import Skills from "../skills/Skills";
 import Project from "../project/Project";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 
 import {
   Box,
@@ -35,7 +37,11 @@ const ProfileContent = styled(Container)(({ theme }) => ({
   borderRadius: theme.spacing(2),
   boxShadow: theme.shadows[3],
   padding: theme.spacing(4),
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(2), // smaller padding on mobile
+  },
 }));
+
 
 // Styled section with card appearance
 const SectionCard = styled(Paper)(({ theme }) => ({
@@ -44,17 +50,21 @@ const SectionCard = styled(Paper)(({ theme }) => ({
   marginBottom: theme.spacing(4),
   boxShadow: theme.shadows[1],
   backgroundColor: theme.palette.background.paper,
+  [theme.breakpoints.down("sm")]: {
+    padding: theme.spacing(2), // more compact
+  },
 }));
 
 export default function Profile() {
   const { user } = useAuthUser();
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
 
   return (
     <ProfileContainer>
       <ProfileContent>
-        <Typography
-          variant="h3"
+      <Typography variant={isMobile ? "h4" : "h3"}
           align="center"
           gutterBottom
           sx={{ fontWeight: "bold", color: theme.palette.primary.main }}
@@ -63,7 +73,7 @@ export default function Profile() {
         </Typography>
 
         <SectionCard>
-          <Typography variant="h5" gutterBottom>
+        <Typography variant={isMobile ? "h6" : "h5"} gutterBottom>
             Basic Info
           </Typography>
           <Stack spacing={1}>

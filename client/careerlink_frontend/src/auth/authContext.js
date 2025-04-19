@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setUser(userData);
       if(userData.role.toLowerCase() === "employer")
-        navigate("/employer/dashboard");
+        navigate("/employer/jobs");
       else
         navigate("/profile");
     } else {
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setUser(userData);
       if(userData.role.toLowerCase() === "employer")
-        navigate("/employer/dashboard");
+        navigate("/employer/jobs");
       else
         navigate("/profile");
     } else {
