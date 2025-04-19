@@ -29,13 +29,9 @@ const uploadResume = async (req, res) => {
 
 const getResumeUrl = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = parseInt(req.params.userId);
 
-    if (parseInt(userId) !== req.userId) {
-      return res.status(401).json({ error: "Request Unauthorized" });
-    }
-
-    const user = await findUserByUserId(req.userId);
+    const user = await findUserByUserId(userId);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -75,7 +71,6 @@ const analyzeResume = async (req, res) => {
     const pdfData = await pdfParse(response.data);
     const resumeText = pdfData.text.slice(0, 8000);
 
-    // 2. Define prompt
     const prompt = `
 You are a professional resume reviewer.
 
@@ -85,7 +80,6 @@ Resume:
 ${resumeText}
     `;
 
-    // 3. Call Gemini API via REST
     const geminiResponse = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GOOGLE_AI_API_KEY}`,
         {

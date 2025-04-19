@@ -14,7 +14,7 @@ const JobPostings = () => {
         salary: "",
         requirements: ""
     });
-    const [editJob, setEditJob] = useState(null); // For editing job posts
+    const [editJob, setEditJob] = useState(null);
     const [errorMessages, setErrorMessages] = useState({
         title: "",
         description: "",
@@ -22,7 +22,6 @@ const JobPostings = () => {
         salary: ""
     });
 
-    // Fetch job postings when component mounts
     useEffect(() => {
         const fetchJobPostings = async () => {
             try {
