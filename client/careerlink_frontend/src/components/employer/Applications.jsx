@@ -77,9 +77,7 @@ const Applications = () => {
                                 <TableRow key={application.id}>
                                     <TableCell>{application.applicantName || "Anonymous"}</TableCell>
                                     <TableCell>{application.jobTitle || "Unknown Job"}</TableCell>
-                                    <TableCell>{application.createdAt && !isNaN(new Date(application.createdAt))
-                                        ? new Date(application.createdAt).toLocaleDateString()
-                                        : "Invalid Date"}</TableCell>
+                                    <TableCell>{application.createdAt}</TableCell>
                                     <TableCell>{application.status}</TableCell>
                                 </TableRow>
                             ))}
