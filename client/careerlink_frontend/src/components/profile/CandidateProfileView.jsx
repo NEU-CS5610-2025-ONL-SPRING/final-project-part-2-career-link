@@ -59,7 +59,7 @@ const SectionCard = styled(Paper)(({ theme }) => ({
 }));
 
 export default function CandidateProfileView() {
-  const { userId } = useParams();
+  const { employeeId } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -71,7 +71,7 @@ export default function CandidateProfileView() {
     async function fetchEmployee() {
       try {
         const data = await fetchGetWithAuth(
-          `${process.env.REACT_APP_API_URL}/api/users/${userId}`
+          `${process.env.REACT_APP_API_URL}/api/users/${employeeId}`
         );
         setEmployee(data);
       } catch (err) {
@@ -81,8 +81,8 @@ export default function CandidateProfileView() {
       }
     }
 
-    if (userId) fetchEmployee();
-  }, [userId]);
+    if (employeeId) fetchEmployee();
+  }, [employeeId]);
 
   if (loading) {
     return (
@@ -136,28 +136,28 @@ export default function CandidateProfileView() {
           <Typography variant="h6" gutterBottom>
             📄 Resume
           </Typography>
-          <ResumeView employeeUserId={userId} />
+          <ResumeView employeeUserId={employeeId} />
         </SectionCard>
 
         <SectionCard>
           <Typography variant="h6" gutterBottom>
             🎓 Education
           </Typography>
-          <EducationView employeeUserId={userId} />
+          <EducationView employeeUserId={employeeId} />
         </SectionCard>
 
         <SectionCard>
           <Typography variant="h6" gutterBottom>
             💼 Experience
           </Typography>
-          <ExperienceView employeeUserId={userId} />
+          <ExperienceView employeeUserId={employeeId} />
         </SectionCard>
 
         <SectionCard>
           <Typography variant="h6" gutterBottom>
             🛠️ Projects
           </Typography>
-          <ProjectView employeeUserId={userId} />
+          <ProjectView employeeUserId={employeeId} />
         </SectionCard>
       </ProfileContent>
     </ProfileContainer>

@@ -82,7 +82,7 @@ function App() {
             }
           />
           <Route
-            path="/candidates/:userId"
+            path="/candidates/:employeeId"
             element={
               <RequireAuth roles={["EMPLOYER"]}>
                 <CandidateProfileView />
