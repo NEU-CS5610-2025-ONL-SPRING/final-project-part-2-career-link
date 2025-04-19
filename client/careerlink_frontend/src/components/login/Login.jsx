@@ -58,6 +58,20 @@ export default function Login() {
             {error}
           </Typography>
         )}
+        <Typography
+          variant="h4"
+          gutterBottom
+          textAlign="center"
+          sx={{
+            fontWeight: 700,
+            letterSpacing: 1,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Hello Again!
+        </Typography>
         <TextField
           fullWidth
           label="Email"

@@ -13,12 +13,9 @@ const {
 
 const getProjects = async (req, res) => {
   try {
-    const { userId } = req.params;
-    if (parseInt(userId) !== req.userId) {
-      return res.status(401).json({ error: "Request Unauthorized" });
-    }
+    const userId = parseInt(req.params.userId);
 
-    const user = await findUserByUserId(req.userId);
+    const user = await findUserByUserId(userId);
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -27,7 +24,7 @@ const getProjects = async (req, res) => {
       return res.status(400).json({ error: "Employers cannot have projects" });
     }
 
-    const projects = await findProjectsByUserId(req.userId);
+    const projects = await findProjectsByUserId(userId);
     return res.json(projects);
   } catch (e) {
     console.error(e);
