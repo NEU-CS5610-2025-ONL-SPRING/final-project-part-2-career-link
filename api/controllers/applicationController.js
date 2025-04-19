@@ -48,41 +48,20 @@ const getEmployerApplicationsForJob = async (req, res) => {
 
 // Update application status
 const updateApplicationStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body; 
+
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    // Verify the application belongs to one of the employer's jobs
-    const application = await prisma.application.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        job: true,
-      },
-    });
-
-    if (!application) {
-      return res.status(404).json({ error: "Application not found" });
-    }
-
-    // Check if the job belongs to the current employer
-    if (application.job.postedById !== req.user.userId) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to update this application" });
-    }
-
-    // Update the status
-    const updatedApplication = await prisma.application.update({
+    const application = await prisma.application.update({
       where: { id: parseInt(id) },
       data: { status },
     });
-
-    res.json(updatedApplication);
+    res.json(application);
   } catch (error) {
-    console.error("Error updating application status:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: 'Failed to update application status' });
   }
 };
+
 
 const getUserApplications = async (req, res) => {
   try {
