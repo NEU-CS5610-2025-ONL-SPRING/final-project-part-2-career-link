@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import {
   Box,
   TextField,
@@ -28,8 +27,9 @@ const SignupBox = styled(Box)(({ theme }) => ({
 }));
 
 const SignupCard = styled(Paper)(({ theme }) => ({
-  width: "600px",
-  padding: theme.spacing(4),
+  width: "100%",
+  maxWidth: "600px",
+  padding: theme.spacing(3),
   borderRadius: theme.spacing(2),
   boxShadow: theme.shadows[6],
   transition: "transform 0.3s, box-shadow 0.3s",
@@ -55,7 +55,6 @@ const Signup = () => {
   });
 
   const [companies, setCompanies] = useState([]);
-
   const [newCompanies, setNewCompanies] = useState([]);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
@@ -88,12 +87,10 @@ const Signup = () => {
 
   const handleAddCompany = () => {
     let newErrors = {};
-    console.log(formData.newCompany);
     if (!formData.location) newErrors.location = "Location is required";
     if (!formData.website) newErrors.website = "Website is required";
 
     if (formData.newCompany && !companies.includes(formData.newCompany)) {
-      console.log(true);
       setCompanies([...companies, formData.newCompany]);
       setNewCompanies([
         ...newCompanies,
@@ -154,17 +151,12 @@ const Signup = () => {
       setFormData(updateFormDataWithCompanies(formData, newCompanies));
       await signup(formData, navigate);
     } catch (err) {
-      setApiError(err.message || "Login failed. Please try again.");
+      setApiError(err.message || "Signup failed. Please try again.");
     }
   };
 
   return (
-    <SignupBox>
-      {apiError && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          {apiError}
-        </Typography>
-      )}
+    <SignupBox sx={{ px: 2 }}>
       <SignupCard>
         <Typography
           variant="h4"
@@ -180,6 +172,13 @@ const Signup = () => {
         >
           Ready to find your dream job?
         </Typography>
+
+        {apiError && (
+          <Typography color="error" sx={{ mb: 2, textAlign: "center" }}>
+            {apiError}
+          </Typography>
+        )}
+
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
@@ -213,7 +212,6 @@ const Signup = () => {
             helperText={errors.password}
             margin="normal"
           />
-
           <TextField
             fullWidth
             label="Re-Enter Password"
@@ -254,51 +252,51 @@ const Signup = () => {
               </FormControl>
 
               {formData.companyName === "" && (
-                <>
-                  <Box display="flex" gap={2}>
-                    <TextField
-                      fullWidth
-                      label="New Company Name"
-                      name="newCompany"
-                      value={formData.newCompany}
-                      onChange={handleChange}
-                      margin="normal"
-                    />
-
-                    {formData.role === "Employer" && (
-                      <>
-                        <TextField
-                          fullWidth
-                          label="Location"
-                          name="location"
-                          value={formData.location}
-                          onChange={handleChange}
-                          error={!!errors.location}
-                          helperText={errors.location}
-                          margin="normal"
-                        />
-                        <TextField
-                          fullWidth
-                          label="Website"
-                          name="website"
-                          value={formData.website}
-                          onChange={handleChange}
-                          error={!!errors.website}
-                          helperText={errors.website}
-                          margin="normal"
-                        />
-                      </>
-                    )}
+                <Box
+                  display="flex"
+                  flexDirection={{ xs: "column", sm: "row" }}
+                  gap={2}
+                  flexWrap="wrap"
+                  alignItems="flex-end"
+                  sx={{ mt: 2 }}
+                >
+                  <TextField
+                    fullWidth
+                    label="New Company Name"
+                    name="newCompany"
+                    value={formData.newCompany}
+                    onChange={handleChange}
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    error={!!errors.location}
+                    helperText={errors.location}
+                    margin="normal"
+                  />
+                  <TextField
+                    fullWidth
+                    label="Website"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    error={!!errors.website}
+                    helperText={errors.website}
+                    margin="normal"
+                  />
                     <Button
                       variant="contained"
                       color="primary"
-                      sx={{ mt: 2, height: "56px" }}
                       onClick={handleAddCompany}
+                      sx={{ display: "flex", justifyContent: "center", width: "100%" }}
                     >
                       Add
                     </Button>
-                  </Box>
-                </>
+                </Box>
               )}
             </>
           )}
