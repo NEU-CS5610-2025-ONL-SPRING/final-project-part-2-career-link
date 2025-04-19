@@ -173,53 +173,40 @@ const JobPostings = () => {
                         </TableHead>
                         <TableBody>
                             {jobPostings.map((job) => (
-                                !job.isDeleted && ( 
-                                <TableRow key={job.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
-                                    <TableCell>{job.title}</TableCell>
-                                    <TableCell>{job.location}</TableCell>
-                                    <TableCell>{job.salary ? `$${job.salary.toLocaleString()}` : "Not specified"}</TableCell>
-                                    <TableCell>
-                                        <Box sx={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            width: 24,
-                                            height: 24,
-                                            borderRadius: '50%',
-                                            backgroundColor: 'primary.main',
-                                            color: 'white',
-                                            fontWeight: 'bold'
-                                        }}>
-                                            {job.applications?.length || 0}
-                                        </Box>
-                                        <Button
-                                            variant="text"
-                                            color="primary"
-                                            onClick={() => window.open(`/employer/applications?jobId=${job.id}`, '_blank')} // Open applications in a new tab
-                                            sx={{ ml: 2, textTransform: 'none', fontSize: '14px' }}
-                                        >
-                                            View Applications
-                                        </Button>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={() => handleEditJob(job)}
-                                            sx={{ mr: 1 }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="error"
-                                            onClick={() => handleDeleteJob(job.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )))}
+                                !job.isDeleted && (
+                                    <TableRow key={job.id} sx={{ '&:hover': { backgroundColor: '#f5f5f5' } }}>
+                                        <TableCell>{job.title}</TableCell>
+                                        <TableCell>{job.location}</TableCell>
+                                        <TableCell>{job.salary ? `$${job.salary.toLocaleString()}` : "Not specified"}</TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="text"
+                                                color="primary"
+                                                onClick={() => window.open(`/employer/applications?jobId=${job.id}`, '_blank')} // Open applications in a new tab
+                                                sx={{ ml: 2, textTransform: 'none', fontSize: '14px' }}
+                                            >
+                                                View Applications
+                                            </Button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <Button
+                                                variant="outlined"
+                                                color="primary"
+                                                onClick={() => handleEditJob(job)}
+                                                sx={{ mr: 1 }}
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                onClick={() => handleDeleteJob(job.id)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                )))}
                         </TableBody>
                     </Table>
                 </TableContainer>
