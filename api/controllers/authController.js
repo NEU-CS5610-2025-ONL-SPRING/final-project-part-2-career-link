@@ -34,7 +34,9 @@ const login = async (req, res) => {
 
     const token = generateJWTToken(payload);
 
-    res.cookie("token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("token", token, { httpOnly: true, secure: isProduction, maxAge: 60 * 60 * 1000 });
 
     const userData = generateUserResponse(user);
 
@@ -101,7 +103,9 @@ const signup = async (req, res) => {
 
     const token = generateJWTToken(payload);
 
-    res.cookie("token", token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("token", token, { httpOnly: true, secure: isProduction, maxAge: 60 * 60 * 1000 });
 
     const userData = generateUserResponse(user);
 
