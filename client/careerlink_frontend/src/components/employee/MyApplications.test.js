@@ -37,11 +37,9 @@ describe("MyApplications", () => {
 
     render(<MyApplications />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Frontend Developer")).toBeInTheDocument();
-      expect(screen.getByText("Tech Corp")).toBeInTheDocument();
-      expect(screen.getByText("New York")).toBeInTheDocument();
-      expect(screen.getByText("UNDER REVIEW")).toBeInTheDocument();
-    });
+    expect(await screen.findByText("Frontend Developer")).toBeInTheDocument();
+    expect(await screen.findByText("Tech Corp")).toBeInTheDocument();
+    expect(await screen.findByText("New York")).toBeInTheDocument();
+    expect(await screen.findByText("UNDER REVIEW")).toBeInTheDocument();
   });
 });

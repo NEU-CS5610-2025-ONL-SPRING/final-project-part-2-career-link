@@ -60,8 +60,12 @@ describe("BrowseJobs", () => {
     fireEvent.click(applyBtn);
 
     await waitFor(() => {
-      expect(fetchPostWithAuth).toHaveBeenCalled();
-      expect(screen.getByText("Applied")).toBeInTheDocument();
-    });
+        expect(fetchPostWithAuth).toHaveBeenCalled();
+      });
+      
+      await waitFor(() => {
+        expect(screen.getByText("Applied")).toBeInTheDocument();
+      });
+      
   });
 });
