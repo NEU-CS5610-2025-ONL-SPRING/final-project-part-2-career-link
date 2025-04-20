@@ -60,13 +60,18 @@ const Companies = () => {
         <Container maxWidth="md" sx={{ py: 5 }}>
             <Box textAlign="center" sx={{ mb: 6 }}>
                 <Typography
-                    variant={isMobile ? 'h4' : 'h3'}
-                    fontWeight={700}
-                    gutterBottom
+                    variant="h4"
                     sx={{
-                        color: theme.palette.primary.main,
-                        letterSpacing: 1.2,
-                        textTransform: 'uppercase',
+                        fontWeight: 700,
+                        color: "primary.main",
+                        textAlign: "center",
+                        mb: 2,
+                        fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }, // Responsive font size
+                        background: "linear-gradient(45deg, #2A4D8C, #D24F75)",  // Gradient background
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        color: "transparent",
+                        textTransform: "uppercase"  // Uppercase for a sleek modern look
                     }}
                 >
                     Company Directory
