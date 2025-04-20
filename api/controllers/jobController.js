@@ -35,6 +35,10 @@ const getJobs = async (req, res) => {
       where.salary = { gte: parseInt(req.query.minSalary) };
     }
 
+    if (req.user.role == "EMPLOYER") {
+      where.postedBy = req.user.userId;
+    }
+
     const jobs = await prisma.job.findMany({
       where,
       include,
@@ -143,12 +147,12 @@ const deleteJob = async (req, res) => {
 };
 
 const updateJob = async (req, res) => {
-  const { id } = req.params;  
-  let { title, description, location, salary, requirements } = req.body; 
+  const { id } = req.params;
+  let { title, description, location, salary, requirements } = req.body;
 
   try {
     if (salary) {
-      salary = parseInt(salary, 10); 
+      salary = parseInt(salary, 10);
       if (isNaN(salary)) {
         return res.status(400).json({ error: "Salary must be a valid number" });
       }
@@ -160,7 +164,7 @@ const updateJob = async (req, res) => {
     });
 
     if (!job) {
-      return res.status(404).json({ error: "Job not found" }); 
+      return res.status(404).json({ error: "Job not found" });
     }
 
     // Proceed to update the job
@@ -169,7 +173,7 @@ const updateJob = async (req, res) => {
       data: { title, description, location, salary, requirements },
     });
 
-    res.status(200).json(updatedJob); 
+    res.status(200).json(updatedJob);
   } catch (error) {
     console.error("Error updating job:", error);
     res.status(500).json({ error: "Internal server error" });

@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       if(userData.role.toLowerCase() === "employer")
         navigate("/employer/jobs");
       else
-        navigate("/profile");
+        navigate("/");
     } else {
       const errorData = await res.json(); 
       setIsAuthenticated(false);
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
       if(userData.role.toLowerCase() === "employer")
         navigate("/employer/jobs");
       else
-        navigate("/profile");
+        navigate("/");
     } else {
       const errorData = await res.json(); 
       setIsAuthenticated(false);
