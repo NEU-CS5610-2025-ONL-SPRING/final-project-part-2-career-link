@@ -66,10 +66,11 @@ const BrowseJobs = () => {
 
   const handleApply = async (jobId) => {
     try {
-      const data = await fetchPostWithAuth(`${API_BASE_URL}/api/applications`, {
+      const response = await fetchPostWithAuth(`${API_BASE_URL}/api/applications`, {
         jobId: Number(jobId),
         userId: Number(user.id)
       });
+      const data = await response.json();
       setApplications(prev => [...prev, data]);
       setJobs(prev => prev.map(job => job.id === jobId ? { ...job, hasApplied: true } : job));
     } catch (err) {
