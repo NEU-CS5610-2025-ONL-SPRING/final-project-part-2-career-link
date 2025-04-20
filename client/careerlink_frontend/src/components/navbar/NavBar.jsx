@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -17,60 +17,78 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useAuthUser } from "../../auth/authContext";
+import { useAuthUser } from '../../auth/authContext';
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backdropFilter: 'blur(6px)',
-  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  backgroundColor: '#0E0E0E',
   boxShadow: 'none',
-  transition: 'all 0.3s ease',
+  transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
   zIndex: theme.zIndex.drawer + 1,
   '&.scrolled': {
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
-  }
+    backgroundColor: '#1A1A1A',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+  },
 }));
 
-const Logo = styled(Typography)(({ theme }) => ({
+const Logo = styled(Link)(({ theme }) => ({
   fontWeight: 800,
-  letterSpacing: 1,
+  fontSize: '1.75rem',
   color: theme.palette.common.white,
   textDecoration: 'none',
   display: 'flex',
   alignItems: 'center',
+  letterSpacing: 2,
   '& span': {
     color: theme.palette.secondary.main,
-    marginLeft: theme.spacing(0.5)
-  }
+    marginLeft: theme.spacing(0.5),
+  },
+  '&:hover': {
+    color: theme.palette.secondary.light,
+  },
 }));
 
 const NavButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.common.white,
-  fontWeight: 500,
-  textTransform: 'none',
+  backgroundColor: 'transparent',
+  color: theme.palette.grey[100],
+  fontWeight: 600,
   fontSize: '1rem',
   padding: theme.spacing(1, 2),
-  borderRadius: theme.shape.borderRadius,
-  transition: 'all 0.2s ease',
+  borderRadius: 0,
+  textTransform: 'none',
+  boxShadow: 'none',
+  minWidth: 'auto',
+  transition: 'color 0.3s ease',
   '&:hover': {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    transform: 'translateY(-2px)'
-  }
+    backgroundColor: 'transparent',
+    color: theme.palette.secondary.main,
+  },
 }));
 
 const ActionButton = styled(Button)(({ theme }) => ({
-  fontWeight: 600,
+  fontWeight: 700,
   textTransform: 'none',
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(1, 2.5),
+  padding: theme.spacing(1.2, 2.5),
   marginLeft: theme.spacing(1),
-  boxShadow: theme.shadows[2],
-  transition: 'all 0.2s ease',
+  borderRadius: 30,
+  transition: 'all 0.3s ease',
   '&:hover': {
-    transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[4]
+    transform: 'translateY(-2px) scale(1.02)',
+    boxShadow: theme.shadows[6],
   }
+}));
+
+const UserAvatar = styled(Avatar)(({ theme }) => ({
+  width: 36,
+  height: 36,
+  backgroundColor: theme.palette.secondary.main,
+  color: theme.palette.common.white,
+  fontWeight: 600,
+  fontSize: '1rem',
+  transition: 'transform 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.1)',
+  },
 }));
 
 const NavBar = () => {
@@ -78,34 +96,21 @@ const NavBar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { user, isAuthenticated, logout, hasRole } = useAuthUser();
   const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
-  // Handle scroll effect
-  React.useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleProfileMenuOpen = (event) => {
-    setProfileAnchorEl(event.currentTarget);
-  };
-
-  const handleProfileMenuClose = () => {
-    setProfileAnchorEl(null);
-  };
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const handleProfileMenuOpen = (event) => setProfileAnchorEl(event.currentTarget);
+  const handleProfileMenuClose = () => setProfileAnchorEl(null);
 
   const handleLogout = () => {
     logout();
@@ -116,34 +121,18 @@ const NavBar = () => {
   return (
     <StyledAppBar position="fixed" className={scrolled ? 'scrolled' : ''}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
           {/* Logo */}
-          <Box sx={{ flexGrow: isMobile ? 1 : 0 }}>
-            <Logo
-              variant="h6"
-              component={Link}
-              to="/"
-              sx={{
-                fontSize: isMobile ? '1.25rem' : '1.5rem'
-              }}
-            >
-              Career<span>Link</span>
-            </Logo>
-          </Box>
+          <Logo to="/">
+            Career<span>Link</span>
+          </Logo>
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <Box sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              flexGrow: 1,
-              gap: 1
-            }}>
+            <Box sx={{ display: 'flex', flexGrow: 1, justifyContent: 'center', gap: 2 }}>
               <NavButton component={Link} to="/">Home</NavButton>
               {isAuthenticated && hasRole('EMPLOYER') && (
-                <>
-                  <NavButton component={Link} to="/employer/jobs">Job Postings</NavButton>
-                </>
+                <NavButton component={Link} to="/employer/jobs">Job Postings</NavButton>
               )}
               {isAuthenticated && hasRole('JOB_SEEKER') && (
                 <>
@@ -169,79 +158,66 @@ const NavBar = () => {
                   <Avatar sx={{
                     width: 32,
                     height: 32,
-                    bgcolor: isAuthenticated ? theme.palette.secondary.main : 'transparent'
+                    bgcolor: isAuthenticated ? theme.palette.secondary.main : 'transparent',
+                    color: isAuthenticated ? 'white' : 'inherit',
                   }}>
                     {isAuthenticated ? (user?.username?.charAt(0) || user?.email?.charAt(0)) : <MenuIcon />}
                   </Avatar>
                 </IconButton>
 
-                {isAuthenticated ? (
-                  <Menu
-                    anchorEl={profileAnchorEl}
-                    open={Boolean(profileAnchorEl)}
-                    onClose={handleProfileMenuClose}
-                    PaperProps={{
-                      elevation: 0,
-                      sx: {
-                        minWidth: 200,
-                        borderRadius: 2,
-                        boxShadow: theme.shadows[8],
-                        mt: 1.5,
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      component={Link}
-                      to="/profile"
-                      onClick={handleProfileMenuClose}
-                      sx={{ py: 1.5 }}
-                    >
-                      My Profile
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem
-                      onClick={handleLogout}
-                      sx={{ py: 1.5, color: theme.palette.error.main }}
-                    >
-                      Logout
-                    </MenuItem>
-                  </Menu>
-                ) : (
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                    PaperProps={{
-                      elevation: 0,
-                      sx: {
-                        minWidth: 200,
-                        borderRadius: 2,
-                        boxShadow: theme.shadows[8],
-                        mt: 1.5,
-                      },
-                    }}
-                  >
-                    <MenuItem
-                      component={Link}
-                      to="/login"
-                      onClick={handleMenuClose}
-                      sx={{ py: 1.5 }}
-                    >
-                      Login
-                    </MenuItem>
-                    <MenuItem
-                      component={Link}
-                      to="/signup"
-                      onClick={handleMenuClose}
-                      sx={{ py: 1.5 }}
-                    >
-                      Sign Up
-                    </MenuItem>
-                    <Divider />
-                    <MenuItem component={Link} to="/" onClick={handleMenuClose}>Home</MenuItem>
-                    <MenuItem component={Link} to="/companies" onClick={handleMenuClose}>Companies</MenuItem>
-                  </Menu>
-                )}
+                <Menu
+                  anchorEl={isAuthenticated ? profileAnchorEl : anchorEl}
+                  open={Boolean(isAuthenticated ? profileAnchorEl : anchorEl)}
+                  onClose={isAuthenticated ? handleProfileMenuClose : handleMenuClose}
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      minWidth: 200,
+                      borderRadius: 2,
+                      mt: 1.5,
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                    },
+                  }}
+                >
+                  {isAuthenticated ? (
+                    <>
+                      <MenuItem component={Link} to="/" onClick={handleProfileMenuClose}>Home</MenuItem>
+                      {hasRole('EMPLOYER') && (
+                        <MenuItem component={Link} to="/employer/jobs" onClick={handleProfileMenuClose}>
+                          Job Postings
+                        </MenuItem>
+                      )}
+                      {hasRole('JOB_SEEKER') && (
+                        <>
+                          <MenuItem component={Link} to="/employee/jobs" onClick={handleProfileMenuClose}>
+                            Browse Jobs
+                          </MenuItem>
+                          <MenuItem component={Link} to="/employee/applications" onClick={handleProfileMenuClose}>
+                            My Applications
+                          </MenuItem>
+                        </>
+                      )}
+                      <MenuItem component={Link} to="/companies" onClick={handleProfileMenuClose}>
+                        Companies
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem component={Link} to="/profile" onClick={handleProfileMenuClose}>
+                        My Profile
+                      </MenuItem>
+                      <MenuItem onClick={handleLogout} sx={{ color: theme.palette.error.main }}>
+                        Logout
+                      </MenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <MenuItem component={Link} to="/login" onClick={handleMenuClose}>Login</MenuItem>
+                      <MenuItem component={Link} to="/signup" onClick={handleMenuClose}>Sign Up</MenuItem>
+                      <Divider />
+                      <MenuItem component={Link} to="/" onClick={handleMenuClose}>Home</MenuItem>
+                      <MenuItem component={Link} to="/companies" onClick={handleMenuClose}>Companies</MenuItem>
+                    </>
+                  )}
+                </Menu>
               </>
             ) : (
               <>
@@ -250,19 +226,10 @@ const NavBar = () => {
                     <Typography variant="body2" sx={{ mr: 2, color: 'white' }}>
                       {user?.email}
                     </Typography>
-                    <IconButton
-                      onClick={handleProfileMenuOpen}
-                      sx={{ ml: 1 }}
-                    >
-                      <Avatar
-                        sx={{
-                          width: 36,
-                          height: 36,
-                          bgcolor: theme.palette.secondary.main
-                        }}
-                      >
+                    <IconButton onClick={handleProfileMenuOpen}>
+                      <UserAvatar>
                         {user?.username?.charAt(0) || user?.email?.charAt(0)}
-                      </Avatar>
+                      </UserAvatar>
                     </IconButton>
                     <Menu
                       anchorEl={profileAnchorEl}
@@ -273,24 +240,16 @@ const NavBar = () => {
                         sx: {
                           minWidth: 200,
                           borderRadius: 2,
-                          boxShadow: theme.shadows[8],
                           mt: 1.5,
+                          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
                         },
                       }}
                     >
-                      <MenuItem
-                        component={Link}
-                        to="/profile"
-                        onClick={handleProfileMenuClose}
-                        sx={{ py: 1.5 }}
-                      >
+                      <MenuItem component={Link} to="/profile" onClick={handleProfileMenuClose}>
                         My Profile
                       </MenuItem>
                       <Divider />
-                      <MenuItem
-                        onClick={handleLogout}
-                        sx={{ py: 1.5, color: theme.palette.error.main }}
-                      >
+                      <MenuItem onClick={handleLogout} sx={{ color: theme.palette.error.main }}>
                         Logout
                       </MenuItem>
                     </Menu>
