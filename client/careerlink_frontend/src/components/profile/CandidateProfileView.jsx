@@ -22,7 +22,6 @@ import ProjectView from "../project/ProjectView";
 import { fetchGetWithAuth } from "../../auth/fetchWithAuth";
 
 
-// Styled containers
 const ProfileContainer = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
   background: `linear-gradient(145deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,

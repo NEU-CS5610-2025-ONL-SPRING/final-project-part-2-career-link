@@ -2,21 +2,20 @@ import React, { useState, useEffect } from 'react';
 import {
     Container,
     Typography,
-    Grid,
     Card,
-    CardContent,
     CircularProgress,
     Box,
     Link,
     Avatar,
     Alert,
-    Divider,
-    useMediaQuery
+    Tooltip,
+    useMediaQuery,
+    Divider
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { getAllCompanies } from '../services/companyService';
-import BusinessIcon from '@mui/icons-material/Business';
-import LocationOnIcon from '@mui/icons-material/LocationOn'; 
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LanguageIcon from '@mui/icons-material/Language';
+import { fetchGetWithAuth } from '../auth/fetchWithAuth'; 
 
 const Companies = () => {
     const theme = useTheme();
@@ -29,7 +28,7 @@ const Companies = () => {
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
-                const data = await getAllCompanies();
+                const data = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/api/companies`);
                 setCompanies(data);
             } catch (err) {
                 setError(err.message || 'Failed to fetch companies');
@@ -43,8 +42,8 @@ const Companies = () => {
 
     if (loading) {
         return (
-            <Container sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <CircularProgress />
+            <Container sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+                <CircularProgress size={40} />
             </Container>
         );
     }
@@ -58,59 +57,110 @@ const Companies = () => {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-                All Companies
-            </Typography>
+        <Container maxWidth="md" sx={{ py: 5 }}>
+            <Box textAlign="center" sx={{ mb: 6 }}>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 700,
+                        color: "primary.main",
+                        textAlign: "center",
+                        mb: 2,
+                        fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                        background: "linear-gradient(45deg, #2A4D8C, #D24F75)",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        color: "transparent",
+                        textTransform: "uppercase"
+                    }}
+                >
+                    Company Directory
+                </Typography>
+                <Typography variant="subtitle1" color="text.secondary">
+                    Discover industry leaders, collaborators, and innovators.
+                </Typography>
+            </Box>
 
             {companies.length === 0 ? (
                 <Typography variant="body1" color="text.secondary">
                     No companies found.
                 </Typography>
             ) : (
-                <Grid container spacing={3}>
-                    {companies.map((company) => (
-                        <Grid item key={company.id} xs={12} sm={6} md={4}>
-                            <Card elevation={2} sx={{ height: '100%', borderRadius: 3 }}>
-                                <CardContent>
-                                    <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: 2 }}>
-                                        <Avatar>
-                                            {company.name[0]}
-                                        </Avatar>
-                                        <Box>
-                                            <Typography variant="h6" fontWeight={600}>
-                                                {company.name}
-                                            </Typography>
-                                            {company.location && (
-                                                <Typography variant="subtitle2" color="text.secondary">
-                                                    <LocationOnIcon fontSize="small" sx={{ mr: 0.5 }} />
-                                                    {company.location}
-                                                </Typography>
-                                            )}
-                                        </Box>
+                companies.map((company) => (
+                    <Card
+                        key={company.id}
+                        elevation={3}
+                        sx={{
+                            mb: 4,
+                            borderRadius: 4,
+                            p: 3,
+                            backgroundColor: theme.palette.background.paper,
+                        }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: isMobile ? 'column' : 'row' }}>
+                            <Avatar
+                                sx={{
+                                    width: 56,
+                                    height: 56,
+                                    fontSize: '1.3rem',
+                                    bgcolor: theme.palette.secondary.main,
+                                    mr: 2,
+                                    mb: isMobile ? 1 : 0,
+                                }}
+                            >
+                                {company.name?.[0]?.toUpperCase() || '?'}
+                            </Avatar>
+                            <Box flex={1}>
+                                <Typography variant="h6" fontWeight={600}>
+                                    {company.name}
+                                </Typography>
+
+                                {company.location && (
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                                        <LocationOnIcon fontSize="small" sx={{ mr: 0.5, color: 'text.secondary' }} />
+                                        <Typography variant="body2" color="text.secondary">
+                                            {company.location}
+                                        </Typography>
                                     </Box>
+                                )}
 
-                                    <Divider sx={{ my: 2 }} />
-
-                                    {company.website && (
+                                {company.website && (
+                                    <Tooltip title="Visit Website" arrow>
                                         <Link
-                                            href={company.website.startsWith('http') ? company.website : `https://${company.website}`}
+                                            href={
+                                                company.website.startsWith('http')
+                                                    ? company.website
+                                                    : `https://${company.website}`
+                                            }
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            sx={{ mb: 1, display: 'block', wordBreak: 'break-word' }}
+                                            sx={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                mt: 1,
+                                                fontSize: '0.9rem',
+                                                color: theme.palette.primary.main
+                                            }}
                                         >
+                                            <LanguageIcon fontSize="small" sx={{ mr: 0.5 }} />
                                             {company.website.replace(/^https?:\/\//, '')}
                                         </Link>
-                                    )}
+                                    </Tooltip>
+                                )}
+                            </Box>
+                        </Box>
 
-                                    <Typography variant="body2" color="text.secondary">
-                                        {company.description || 'No description available.'}
-                                    </Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    ))}
-                </Grid>
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ whiteSpace: 'pre-wrap' }}
+                        >
+                            {company.description || 'No description available.'}
+                        </Typography>
+                    </Card>
+                ))
             )}
         </Container>
     );

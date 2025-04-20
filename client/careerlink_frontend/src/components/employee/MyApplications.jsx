@@ -1,24 +1,37 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container, Typography, Grid, Card, CardContent,
-  Box, Chip, CircularProgress, Alert, Divider, Avatar,
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, ToggleButtonGroup, ToggleButton
+  Container, Typography, Box, Chip, CircularProgress, Alert,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 } from '@mui/material';
 import { useAuthUser } from '../../auth/authContext';
 import { fetchGetWithAuth } from '../../auth/fetchWithAuth';
-import { DateRange as DateIcon, ViewModule, TableRows } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const formatDate = (dateString) =>
   new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(dateString));
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  fontWeight: 500,
+  color: theme.palette.text.primary,
+  padding: theme.spacing(1.5),
+  fontSize: theme.typography.body2.fontSize,
+}));
+
+const StyledHeaderCell = styled(TableCell)(({ theme }) => ({
+  fontWeight: 700,
+  backgroundColor: theme.palette.primary.light,
+  color: theme.palette.primary.contrastText,
+  padding: theme.spacing(1.5),
+  fontSize: theme.typography.body2.fontSize,
+}));
+
 const MyApplications = () => {
   const { user } = useAuthUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [applications, setApplications] = useState([]);
-  const [view, setView] = useState('cards'); // New state for view toggle
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -47,74 +60,33 @@ const MyApplications = () => {
     }
   }, []);
 
-  const renderApplicationCard = (application) => {
-    const { job, appliedAt, status, id } = application;
-
-    return (
-      <Grid item xs={12} key={id}>
-        <Card elevation={2} sx={{ borderRadius: 3 }}>
-          <CardContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar>{job?.title?.[0] || '?'}</Avatar>
-                <Box>
-                  <Typography variant="h6" fontWeight={600}>
-                    {job?.isDeleted ? `${job.title} (Closed)` : job?.title}
-                  </Typography>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {job?.company?.name} • {job?.location}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <Divider sx={{ my: 1 }} />
-
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <DateIcon fontSize="small" />
-                  <Typography variant="body2" color="text.secondary">
-                    Applied on: {formatDate(appliedAt)}
-                  </Typography>
-                </Box>
-                <Chip
-                  label={status.replace('_', ' ')}
-                  color={getStatusColor(status)}
-                  sx={{ fontWeight: 500 }}
-                />
-              </Box>
-            </Box>
-          </CardContent>
-        </Card>
-      </Grid>
-    );
-  };
-
   const renderApplicationTable = () => (
-    <TableContainer component={Paper} sx={{ mt: 2 }}>
-      <Table>
+    <TableContainer component={Paper} sx={{ mt: 3, borderRadius: 2, overflowX: 'auto', boxShadow: 2 }}>
+      <Table sx={{ minWidth: 600 }} size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Job Title</TableCell>
-            <TableCell>Company</TableCell>
-            <TableCell>Location</TableCell>
-            <TableCell>Applied At</TableCell>
-            <TableCell>Status</TableCell>
+            <StyledHeaderCell>Job Title</StyledHeaderCell>
+            <StyledHeaderCell>Company</StyledHeaderCell>
+            <StyledHeaderCell>Location</StyledHeaderCell>
+            <StyledHeaderCell>Applied Date</StyledHeaderCell>
+            <StyledHeaderCell>Status</StyledHeaderCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {applications.map((app) => (
-            <TableRow key={app.id}>
-              <TableCell>{app.job?.isDeleted ? `${app.job.title} (Closed)` : app.job?.title}</TableCell>
-              <TableCell>{app.job?.company?.name}</TableCell>
-              <TableCell>{app.job?.location}</TableCell>
-              <TableCell>{formatDate(app.appliedAt)}</TableCell>
-              <TableCell>
+            <TableRow key={app.id} hover>
+              <StyledTableCell>{app.job?.isDeleted ? `${app.job.title} (Closed)` : app.job?.title}</StyledTableCell>
+              <StyledTableCell>{app.job?.company?.name}</StyledTableCell>
+              <StyledTableCell>{app.job?.location}</StyledTableCell>
+              <StyledTableCell>{formatDate(app.appliedAt)}</StyledTableCell>
+              <StyledTableCell>
                 <Chip
                   label={app.status.replace('_', ' ')}
                   color={getStatusColor(app.status)}
                   size="small"
+                  sx={{ fontWeight: 500 }}
                 />
-              </TableCell>
+              </StyledTableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -124,22 +96,23 @@ const MyApplications = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4" component="h1">
-          My Job Applications
-        </Typography>
-
-        <ToggleButtonGroup
-          value={view}
-          exclusive
-          onChange={(e, newView) => newView && setView(newView)}
-          size="small"
-        >
-          <ToggleButton value="cards"><ViewModule fontSize="small" /></ToggleButton>
-          <ToggleButton value="table"><TableRows fontSize="small" /></ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
-
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 700,
+          color: "primary.main",
+          textAlign: "center",
+          mb: 2,
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+          background: "linear-gradient(45deg, #2A4D8C, #D24F75)",
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          textTransform: "uppercase"
+        }}
+      >
+        My Job Applications
+      </Typography>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
           <CircularProgress />
@@ -150,10 +123,6 @@ const MyApplications = () => {
         <Typography variant="body1" color="text.secondary" textAlign="center">
           You haven’t applied to any jobs yet.
         </Typography>
-      ) : view === 'cards' ? (
-        <Grid container spacing={3}>
-          {applications.map(renderApplicationCard)}
-        </Grid>
       ) : (
         renderApplicationTable()
       )}
