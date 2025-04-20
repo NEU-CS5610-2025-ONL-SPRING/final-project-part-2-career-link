@@ -35,7 +35,6 @@ const login = async (req, res) => {
     const token = generateJWTToken(payload);
 
     const isProduction = process.env.NODE_ENV === "production";
-    console.log(isProduction);
 
     res.cookie("token", token, { httpOnly: true, secure: isProduction, sameSite: isProduction ? "None" : "Lax", maxAge: 60 * 60 * 1000 });
 
