@@ -19,7 +19,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useAuthUser } from '../../auth/authContext';
 
-// Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: '#0E0E0E',
   boxShadow: 'none',

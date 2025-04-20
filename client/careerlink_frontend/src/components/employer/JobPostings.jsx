@@ -116,12 +116,12 @@ const JobPostings = () => {
                     color: "primary.main",
                     textAlign: "center",
                     mb: 2,
-                    fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }, // Responsive font size
-                    background: "linear-gradient(45deg, #2A4D8C, #D24F75)",  // Gradient background
+                    fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                    background: "linear-gradient(45deg, #2A4D8C, #D24F75)",
                     backgroundClip: "text",
                     WebkitBackgroundClip: "text",
                     color: "transparent",
-                    textTransform: "uppercase"  // Uppercase for a sleek modern look
+                    textTransform: "uppercase"
                 }}
             >
                 Job Postings
@@ -193,9 +193,9 @@ const JobPostings = () => {
             <Dialog
                 open={openDialog}
                 onClose={handleDialogClose}
-                maxWidth="md"  // Increase max width for larger screens
+                maxWidth="md" 
                 fullWidth
-                sx={{ padding: { xs: 2, sm: 3 } }}  // Responsive padding
+                sx={{ padding: { xs: 2, sm: 3 } }}  
             >
                 <DialogTitle
                     sx={{
@@ -219,7 +219,7 @@ const JobPostings = () => {
                         margin="normal"
                         error={!!errorMessages.title}
                         helperText={errorMessages.title}
-                        sx={{ mb: 3 }}  // Spacing between fields
+                        sx={{ mb: 3 }}
                     />
 
                     <TextField
@@ -230,7 +230,7 @@ const JobPostings = () => {
                         margin="normal"
                         error={!!errorMessages.location}
                         helperText={errorMessages.location}
-                        sx={{ mb: 3 }}  // Spacing between fields
+                        sx={{ mb: 3 }}
                     />
 
                     <TextField
@@ -242,7 +242,7 @@ const JobPostings = () => {
                         type="number"
                         error={!!errorMessages.salary}
                         helperText={errorMessages.salary}
-                        sx={{ mb: 3 }}  // Spacing between fields
+                        sx={{ mb: 3 }}
                     />
 
                     <TextField
@@ -255,7 +255,7 @@ const JobPostings = () => {
                         rows={4}
                         error={!!errorMessages.description}
                         helperText={errorMessages.description}
-                        sx={{ mb: 3 }}  // Spacing between fields
+                        sx={{ mb: 3 }}
                     />
 
                     <TextField
@@ -266,7 +266,7 @@ const JobPostings = () => {
                         margin="normal"
                         multiline
                         rows={3}
-                        sx={{ mb: 3 }}  // Spacing between fields
+                        sx={{ mb: 3 }}
                     />
                 </DialogContent>
 

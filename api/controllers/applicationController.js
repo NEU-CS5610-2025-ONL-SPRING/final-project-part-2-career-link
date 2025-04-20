@@ -9,7 +9,6 @@ const getEmployerApplicationsForJob = async (req, res) => {
   }
 
   try {
-    // Get the applications for the specific job
     const applications = await prisma.application.findMany({
       where: { jobId: parseInt(jobId) },
       include: {
@@ -96,14 +95,12 @@ const createApplication = async (req, res) => {
   try {
     const { jobId, userId } = req.body;
 
-    // Verify user is applying for themselves
     if (parseInt(userId) !== req.user.userId) {
       return res
         .status(403)
         .json({ error: "Not authorized to apply for this user" });
     }
 
-    // Check if application already exists
     const existingApp = await prisma.application.findFirst({
       where: {
         jobId: parseInt(jobId),

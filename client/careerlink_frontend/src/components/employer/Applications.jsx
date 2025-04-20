@@ -34,7 +34,7 @@ const Applications = () => {
     const fetchApplications = async () => {
       try {
         setLoading(true);
-        setError(null); // Reset previous errors
+        setError(null);  
         const response = await fetchGetWithAuth(
           `${process.env.REACT_APP_API_URL}/api/applications/employer/job?jobId=${jobId}`
         );
@@ -70,7 +70,6 @@ const Applications = () => {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <Box
@@ -88,7 +87,6 @@ const Applications = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <Box

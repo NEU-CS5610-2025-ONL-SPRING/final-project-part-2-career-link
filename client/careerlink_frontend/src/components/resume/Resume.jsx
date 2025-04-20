@@ -86,9 +86,9 @@ export default function Resume({ onUploadComplete }) {
   const handleAnalyzeResume = async () => {
     try {
       setError("");
-      setReviewText(""); // clear old result
+      setReviewText(""); 
       setLoadingReview(true);
-      setOpenReviewDialog(true); // show dialog immediately
+      setOpenReviewDialog(true); 
   
       const data = await fetchGetWithAuth(
         `${process.env.REACT_APP_API_URL}/api/resume/analyze/${user.id}`

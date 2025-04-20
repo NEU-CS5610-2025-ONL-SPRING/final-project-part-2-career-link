@@ -15,7 +15,6 @@ import { Link } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { useAuthUser } from "../../auth/authContext";
 
-// Custom styled components
 const HeroBox = styled(Box)(({ theme }) => ({
     minHeight: 'calc(100vh - 64px)',
     display: 'flex',

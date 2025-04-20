@@ -17,7 +17,6 @@ import {
 import { styled } from "@mui/system";
 import Resume from "../resume/Resume";
 
-// Page container with background gradient
 const ProfileContainer = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
   background: `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
@@ -29,7 +28,6 @@ const ProfileContainer = styled(Box)(({ theme }) => ({
   alignItems: "flex-start",
 }));
 
-// Main content wrapper
 const ProfileContent = styled(Container)(({ theme }) => ({
   width: "100%",
   maxWidth: "1000px",
@@ -38,12 +36,11 @@ const ProfileContent = styled(Container)(({ theme }) => ({
   boxShadow: theme.shadows[3],
   padding: theme.spacing(4),
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(2), // smaller padding on mobile
+    padding: theme.spacing(2),
   },
 }));
 
 
-// Styled section with card appearance
 const SectionCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   borderRadius: theme.spacing(1),
@@ -51,7 +48,7 @@ const SectionCard = styled(Paper)(({ theme }) => ({
   boxShadow: theme.shadows[1],
   backgroundColor: theme.palette.background.paper,
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(2), // more compact
+    padding: theme.spacing(2), 
   },
 }));
 

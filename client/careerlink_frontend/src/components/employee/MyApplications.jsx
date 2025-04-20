@@ -103,12 +103,12 @@ const MyApplications = () => {
           color: "primary.main",
           textAlign: "center",
           mb: 2,
-          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }, // Responsive font size
-          background: "linear-gradient(45deg, #2A4D8C, #D24F75)",  // Gradient background
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+          background: "linear-gradient(45deg, #2A4D8C, #D24F75)",
           backgroundClip: "text",
           WebkitBackgroundClip: "text",
           color: "transparent",
-          textTransform: "uppercase"  // Uppercase for a sleek modern look
+          textTransform: "uppercase"
         }}
       >
         My Job Applications

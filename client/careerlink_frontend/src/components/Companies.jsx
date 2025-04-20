@@ -13,9 +13,9 @@ import {
     Divider
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { getAllCompanies } from '../services/companyService';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LanguageIcon from '@mui/icons-material/Language';
+import { fetchGetWithAuth } from '../auth/fetchWithAuth'; 
 
 const Companies = () => {
     const theme = useTheme();
@@ -28,7 +28,7 @@ const Companies = () => {
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
-                const data = await getAllCompanies();
+                const data = await fetchGetWithAuth("http://localhost:8000/api/companies");
                 setCompanies(data);
             } catch (err) {
                 setError(err.message || 'Failed to fetch companies');
@@ -66,12 +66,12 @@ const Companies = () => {
                         color: "primary.main",
                         textAlign: "center",
                         mb: 2,
-                        fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }, // Responsive font size
-                        background: "linear-gradient(45deg, #2A4D8C, #D24F75)",  // Gradient background
+                        fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                        background: "linear-gradient(45deg, #2A4D8C, #D24F75)",
                         backgroundClip: "text",
                         WebkitBackgroundClip: "text",
                         color: "transparent",
-                        textTransform: "uppercase"  // Uppercase for a sleek modern look
+                        textTransform: "uppercase"
                     }}
                 >
                     Company Directory
