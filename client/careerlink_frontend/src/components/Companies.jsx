@@ -28,7 +28,7 @@ const Companies = () => {
     useEffect(() => {
         const fetchCompanies = async () => {
             try {
-                const data = await fetchGetWithAuth("http://localhost:8000/api/companies");
+                const data = await fetchGetWithAuth(`${process.env.REACT_APP_API_URL}/api/companies`);
                 setCompanies(data);
             } catch (err) {
                 setError(err.message || 'Failed to fetch companies');
