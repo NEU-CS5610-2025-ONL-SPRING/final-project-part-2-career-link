@@ -23,7 +23,7 @@ require("dotenv").config();
 const allowedOrigins = [
   "http://localhost:3000",
   "https://careerlink-frontend-p5v1a9x0v-sandeshs-projects-cc7c8af1.vercel.app",
-  "https://careerlink-frontend.vercel.app/"
+  "https://careerlink-frontend.vercel.app"
 ];
 
 const app = express();
