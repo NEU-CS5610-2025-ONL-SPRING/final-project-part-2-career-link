@@ -142,7 +142,7 @@ export default function Resume({ onUploadComplete }) {
                 type="file"
                 hidden
                 onChange={handleFileChange}
-                accept=".pdf,.doc,.docx"
+                accept=".pdf"
               />
             </Button>
             {file && (
