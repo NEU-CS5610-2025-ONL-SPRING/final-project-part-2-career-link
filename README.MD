@@ -8,8 +8,7 @@ https://careerlink-frontend.vercel.app/
 In order for backend to spinup its server please go to companies page available in the nav bar so it makes an API call to the server, so backend can be up and running.
 
 ## Video link of the project 
-
-
+https://youtu.be/gIxPVH62HSA
 
 ## Key Features
 
