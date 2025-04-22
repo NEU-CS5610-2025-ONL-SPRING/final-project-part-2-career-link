@@ -1,13 +1,13 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import Experience from "./Experience";
-import { useAuthUser } from "../../auth/authContext";
+import Experience from "../components/experience/Experience";
+import { useAuthUser } from "../auth/authContext";
 
-jest.mock("../../auth/authContext", () => ({
+jest.mock("../auth/authContext", () => ({
   useAuthUser: jest.fn(),
 }));
 
-jest.mock("../../auth/fetchWithAuth", () => ({
+jest.mock("../auth/fetchWithAuth", () => ({
   fetchGetWithAuth: jest.fn(() => Promise.resolve([])),
   fetchPostWithAuth: jest.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ id: 1 }) })),
   fetchPutWithAuth: jest.fn(),

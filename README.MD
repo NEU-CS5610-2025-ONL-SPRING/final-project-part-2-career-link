@@ -35,7 +35,7 @@ This robust system ensures a secure, scalable, and user-friendly experience for 
 ### Setup
 
 1. **Install Dependencies:**
-   - Open terminal in `client\careerlink_folder` and `api` folder.
+   - Open terminal in `client/careerlink_folder` and `api` folder.
    - Run `npm install` in both directories to install necessary dependencies.
 
 2. **Set Environment Variables:**
@@ -65,14 +65,14 @@ This robust system ensures a secure, scalable, and user-friendly experience for 
 ### Frontend Setup
 
 1. **Environment Configuration:**
-   - Update the `.env` file in the `client\careerlink_folder` for local development:
+   - Update the `.env` file in the `client/careerlink_folder` for local development:
      ```plaintext
      REACT_APP_API_URL=http://localhost:8080
      ```
    - Adjust `REACT_APP_API_URL` to match your backend API endpoint for local testing.
 
 2. **Run Frontend:**
-   - In `client\careerlink_folder`, run `npm start` to start the frontend server.
+   - In `client/careerlink_folder`, run `npm start` to start the frontend server.
 
 ### Connecting Frontend to Backend
 
@@ -93,6 +93,11 @@ This robust system ensures a secure, scalable, and user-friendly experience for 
 - **Resume Storage with Cloudinary:**
   - We use **Cloudinary SDKs** to securely store uploaded resumes in the cloud.
   - This ensures that resumes are easily accessible to both **Job Seekers** and **Employers**, improving the overall user experience and performance.
+
+
+  ### Tests
+- To Run tests go inside `client/careerlink_folder` and run `npm test`
+- There are total 3 test classes inside `src/tests` folder
 
 
 

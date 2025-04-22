@@ -1,13 +1,13 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
-import MyApplications from "./MyApplications";
-import { useAuthUser } from "../../auth/authContext";
-import { fetchGetWithAuth } from "../../auth/fetchWithAuth";
+import { render, screen } from "@testing-library/react";
+import MyApplications from "../components/employee/MyApplications";
+import { useAuthUser } from "../auth/authContext";
+import { fetchGetWithAuth } from "../auth/fetchWithAuth";
 
-jest.mock("../../auth/authContext", () => ({
+jest.mock("../auth/authContext", () => ({
   useAuthUser: jest.fn(),
 }));
-jest.mock("../../auth/fetchWithAuth");
+jest.mock("../auth/fetchWithAuth");
 
 describe("MyApplications", () => {
   beforeEach(() => {
