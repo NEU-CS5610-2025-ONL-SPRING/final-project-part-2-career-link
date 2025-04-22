@@ -3,7 +3,8 @@
 CareerLink is a web application designed to connect job seekers with employers by providing a seamless platform for job postings and applications. Employers can create, manage, and delete job postings, while job seekers can apply for jobs, track applications, and maintain a comprehensive profile with details such as skills, experience, and projects.
 
 ## Career Link Webiste
-https://careerlink-frontend.vercel.app/
+- Frontend : https://careerlink-frontend.vercel.app/
+- Backend : https://final-project-part-2-career-link.onrender.com
 
 In order for backend to spinup its server please go to companies page available in the nav bar so it makes an API call to the server, so backend can be up and running.
 
